@@ -1,0 +1,1034 @@
+<!doctype html>
+
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Siti Tasya | Whimsical Children's Illustrator</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,700&amp;family=Quicksand:wght@400;500;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              error: "#ba1a1a",
+              "on-secondary": "#ffffff",
+              "inverse-primary": "#ffb5a0",
+              surface: "#fbfaee",
+              "surface-container": "#efeee3",
+              "on-primary": "#ffffff",
+              "secondary-fixed-dim": "#bbcca7",
+              tertiary: "#735800",
+              "surface-container-high": "#e9e9dd",
+              "surface-bright": "#fbfaee",
+              outline: "#89726c",
+              "on-tertiary-container": "#fffbff",
+              "surface-dim": "#dbdbcf",
+              "surface-container-lowest": "#ffffff",
+              "on-primary-container": "#fffbff",
+              "on-background": "#1b1c15",
+              "on-secondary-container": "#5a694a",
+              "surface-container-highest": "#e4e3d7",
+              primary: "#9a4026",
+              "surface-container-low": "#f5f4e8",
+              "on-surface": "#1b1c15",
+              "on-error-container": "#93000a",
+              "on-primary-fixed-variant": "#7e2c13",
+              "tertiary-fixed": "#ffdf94",
+              "inverse-on-surface": "#f2f1e5",
+              "surface-tint": "#9d4228",
+              "surface-variant": "#e4e3d7",
+              "on-error": "#ffffff",
+              "on-tertiary": "#ffffff",
+              "secondary-container": "#d7e9c2",
+              "secondary-fixed": "#d7e9c2",
+              "on-secondary-fixed-variant": "#3c4b2f",
+              "on-tertiary-fixed-variant": "#594400",
+              background: "#fbfaee",
+              "primary-fixed-dim": "#ffb5a0",
+              "primary-container": "#b9583b",
+              "on-primary-fixed": "#3b0900",
+              "primary-fixed": "#ffdbd1",
+              "on-secondary-fixed": "#121f07",
+              secondary: "#546345",
+              "on-tertiary-fixed": "#241a00",
+              "tertiary-fixed-dim": "#efc13e",
+              "inverse-surface": "#303129",
+              "tertiary-container": "#917000",
+              "outline-variant": "#dcc1b9",
+              "error-container": "#ffdad6",
+              "on-surface-variant": "#56423d",
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+            spacing: {
+              "margin-mobile": "20px",
+              "margin-desktop": "64px",
+              gutter: "24px",
+              "container-max": "1280px",
+              unit: "8px",
+            },
+            fontFamily: {
+              "display-lg": ["Playfair Display"],
+              "body-md": ["Quicksand"],
+              "display-lg-mobile": ["Playfair Display"],
+              "headline-md": ["Playfair Display"],
+              "label-caps": ["Quicksand"],
+              "body-lg": ["Quicksand"],
+            },
+            fontSize: {
+              "display-lg": [
+                "64px",
+                {
+                  lineHeight: "72px",
+                  letterSpacing: "-0.02em",
+                  fontWeight: "700",
+                },
+              ],
+              "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+              "display-lg-mobile": [
+                "42px",
+                { lineHeight: "48px", fontWeight: "700" },
+              ],
+              "headline-md": [
+                "40px",
+                { lineHeight: "48px", fontWeight: "600" },
+              ],
+              "label-caps": [
+                "12px",
+                {
+                  lineHeight: "16px",
+                  letterSpacing: "0.1em",
+                  fontWeight: "700",
+                },
+              ],
+              "body-lg": ["18px", { lineHeight: "28px", fontWeight: "500" }],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        background-color: #fbfaee;
+        background-image: url("https://www.transparenttextures.com/patterns/cream-paper.png");
+        overflow-x: hidden;
+      }
+
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 300,
+          "GRAD" 0,
+          "opsz" 24;
+      }
+
+      .pulse-badge {
+        position: relative;
+      }
+      .pulse-badge::after {
+        content: "";
+        position: absolute;
+        inset: -4px;
+        border-radius: 9999px;
+        border: 2px solid #bbcca7;
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      }
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        100% {
+          transform: scale(1.3);
+          opacity: 0;
+        }
+      }
+
+      .storybook-button {
+        border-bottom: 5px solid rgba(0, 0, 0, 0.15);
+        transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+      .storybook-button:hover {
+        transform: translateY(2px);
+        border-bottom-width: 3px;
+      }
+      .storybook-button:active {
+        transform: translateY(5px);
+        border-bottom-width: 0;
+      }
+
+      .hand-drawn-border {
+        border: 3px solid #56423d;
+        border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+      }
+
+      .masonry {
+        column-count: 1;
+        column-gap: 2rem;
+      }
+      @media (min-width: 768px) {
+        .masonry {
+          column-count: 2;
+        }
+      }
+
+      .gallery-item {
+        break-inside: avoid;
+        margin-bottom: 2rem;
+        position: relative;
+      }
+
+      .sketchbook-frame {
+        padding: 1rem;
+        background: #fff;
+        box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.05);
+        border-radius: 4px;
+        transform: rotate(-1deg);
+      }
+      .gallery-item:nth-child(even) .sketchbook-frame {
+        transform: rotate(1.5deg);
+      }
+
+      .scribble-accent {
+        pointer-events: none;
+        opacity: 0.25;
+        filter: sepia(100%) saturate(300%) hue-rotate(-10deg);
+      }
+
+      .torn-edge {
+        mask-image: url("https://www.transparenttextures.com/patterns/brushed-alum.png");
+        -webkit-mask-image: url("https://www.transparenttextures.com/patterns/brushed-alum.png");
+      }
+
+      .watercolor-blob {
+        background: radial-gradient(
+          circle,
+          var(--tw-gradient-from) 0%,
+          transparent 70%
+        );
+        filter: blur(40px);
+        opacity: 0.3;
+      }
+
+      .text-mix {
+        font-family: "Playfair Display", serif;
+      }
+      .text-mix span {
+        font-style: italic;
+        font-weight: 400;
+      }
+
+      .asymmetric-grid {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+      }
+    </style>
+  </head>
+  <body
+    class="font-body-md text-on-surface selection:bg-primary/20 selection:text-primary"
+  >
+    <!-- Floating Background Doodles -->
+    <div class="fixed inset-0 pointer-events-none z-[-1] overflow-hidden">
+      <span
+        class="material-symbols-outlined absolute top-40 left-[5%] text-4xl scribble-accent rotate-12"
+        >auto_awesome</span
+      >
+      <span
+        class="material-symbols-outlined absolute top-1/4 right-[8%] text-6xl scribble-accent -rotate-45"
+        >potted_plant</span
+      >
+      <span
+        class="material-symbols-outlined absolute bottom-1/3 left-[2%] text-8xl scribble-accent rotate-[150deg]"
+        >brush</span
+      >
+      <span
+        class="material-symbols-outlined absolute bottom-20 right-[5%] text-5xl scribble-accent rotate-12"
+        >temp_preferences_custom</span
+      >
+      <span
+        class="material-symbols-outlined absolute top-1/2 left-[10%] text-3xl scribble-accent"
+        >star_rate</span
+      >
+      <div
+        class="absolute top-[20%] right-[-10%] w-96 h-96 watercolor-blob from-secondary-container"
+      ></div>
+      <div
+        class="absolute bottom-[-10%] left-[-5%] w-[500px] h-[500px] watercolor-blob from-primary-fixed"
+      ></div>
+    </div>
+    <!-- Top Navigation -->
+    <nav
+      class="fixed top-0 left-0 right-0 z-50 bg-surface/40 backdrop-blur-xl border-b border-primary/5"
+    >
+      <div
+        class="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-6 max-w-container-max mx-auto"
+      >
+        <a
+          class="font-display-lg text-3xl text-primary italic font-bold"
+          href="#"
+          >Siti Tasya</a
+        >
+        <div
+          class="hidden md:flex gap-10 items-center font-body-lg text-body-lg tracking-wide"
+        >
+          <a class="text-primary font-bold relative group" href="#work">
+            Work
+            <span
+              class="absolute -bottom-1 left-0 w-full h-0.5 bg-primary transform scale-x-100 transition-transform"
+            ></span>
+          </a>
+          <a
+            class="text-on-surface-variant hover:text-primary transition-all relative group"
+            href="#about"
+          >
+            About
+            <span
+              class="absolute -bottom-1 left-0 w-full h-0.5 bg-primary transform scale-x-0 group-hover:scale-x-100 transition-transform"
+            ></span>
+          </a>
+          <a
+            class="text-on-surface-variant hover:text-primary transition-all relative group"
+            href="#services"
+          >
+            Services
+            <span
+              class="absolute -bottom-1 left-0 w-full h-0.5 bg-primary transform scale-x-0 group-hover:scale-x-100 transition-transform"
+            ></span>
+          </a>
+          <a
+            class="text-on-surface-variant hover:text-primary transition-all relative group"
+            href="#contact"
+          >
+            Contact
+            <span
+              class="absolute -bottom-1 left-0 w-full h-0.5 bg-primary transform scale-x-0 group-hover:scale-x-100 transition-transform"
+            ></span>
+          </a>
+        </div>
+        <button
+          class="bg-primary text-on-primary px-8 py-2.5 rounded-full storybook-button font-bold shadow-lg shadow-primary/20"
+        >
+          Hire Me
+        </button>
+      </div>
+    </nav>
+    <!-- Hero Section -->
+    <header
+      class="relative pt-40 pb-20 md:pt-64 md:pb-48 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto"
+    >
+      <div class="asymmetric-grid gap-y-12">
+        <div class="col-span-12 lg:col-span-7 z-10 space-y-10 lg:pr-12">
+          <div
+            class="inline-flex items-center gap-3 bg-secondary-container/80 backdrop-blur-sm text-on-secondary-container px-5 py-2.5 rounded-full text-label-caps pulse-badge font-bold"
+          >
+            <span class="w-2.5 h-2.5 bg-secondary rounded-full"></span>
+            AVAILABLE FOR FREELANCE
+          </div>
+          <div>
+            <h1
+              class="text-mix text-display-lg-mobile md:text-display-lg text-primary mb-6 leading-[1.1]"
+            >
+              Siti Tasya, <br />
+              <span>Illustrator</span> based in <br />
+              <span>Kota Bekasi</span>, Indonesia
+            </h1>
+            <p
+              class="font-body-lg text-xl md:text-2xl text-on-surface-variant max-w-xl leading-relaxed"
+            >
+              Creating magical worlds and gentle characters for children's
+              stories. I turn daydreams into tactile digital art with a heart.
+            </p>
+          </div>
+          <div class="flex flex-wrap gap-6 pt-4">
+            <a
+              class="bg-primary text-on-primary px-10 py-5 rounded-2xl storybook-button font-bold text-lg shadow-xl shadow-primary/20"
+              href="#work"
+              >View My Work</a
+            >
+            <a
+              class="bg-white/60 backdrop-blur-sm text-primary px-10 py-5 rounded-2xl storybook-button font-bold text-lg border-2 border-primary/20"
+              href="#contact"
+              >Hire Me</a
+            >
+          </div>
+        </div>
+        <!-- Overlapping Hero Image -->
+        <div class="col-span-12 lg:col-span-5 relative mt-12 lg:mt-0">
+          <div
+            class="relative w-full aspect-square max-w-lg mx-auto lg:ml-auto"
+          >
+            <!-- Decorative Frame Behind -->
+            <div
+              class="absolute -top-10 -left-10 w-full h-full bg-secondary-container/40 rounded-[60px] rotate-6 -z-10"
+            ></div>
+            <div
+              class="absolute -bottom-6 -right-6 w-full h-full border-4 border-primary/10 rounded-[40px] -rotate-3 -z-10"
+            ></div>
+            <div
+              class="w-full h-full sketchbook-frame relative overflow-hidden shadow-2xl scale-110 lg:translate-x-[-10%] lg:translate-y-[-10%]"
+            >
+              <img
+                class="w-full h-full object-cover rounded-sm transition-transform duration-1000 hover:scale-105"
+                data-alt="A central whimsical character illustration of a gentle forest creature with large soulful eyes and soft textures. The creature is surrounded by floating botanicals and delicate ink splatters. The style is hand-drawn digital art using a warm palette of terracotta, sage green, and soft cream, evoking a storybook atmosphere with gentle lighting."
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuB4umCMfSJ8yIwPj727qS0I7-lkPPAaUVoz_ZRbYlLTqE0WcRkU57qb_60Tgowk8XZy9n2gu0cEl8dCgk6-W7y8D099222qa5Zt_4c0udfVvMtiSjiLpuYxWdGdE3HunlJZ_RScWioMtGV_AR_yBko4NZakzfAZaGHTMLbrOv5bxTnAbcgRM7ylVKG4aYj7SQxro7Nr60JaSjKLm46S2oSEcO0gaMlGKbLKk2A6JnYcahgLshBYw-6yotd-bdyjHkrSnKM-AGahw3M"
+              />
+            </div>
+            <!-- Floating Elements Over Image -->
+            <div
+              class="absolute -top-12 -right-8 scribble-accent text-primary/60 scale-150"
+            >
+              <span class="material-symbols-outlined text-6xl"
+                >magic_button</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <!-- About Section with Asymmetrical Layout -->
+    <section class="py-32 relative overflow-hidden" id="about">
+      <!-- Section Divider (Organic Shape) -->
+      <div
+        class="absolute top-0 left-0 w-full h-32 bg-surface-container-low torn-edge transform -translate-y-1/2"
+      ></div>
+      <div
+        class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop"
+      >
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+          <div class="lg:col-span-5 order-2 lg:order-1">
+            <div class="relative mx-auto lg:mx-0 max-w-sm">
+              <div
+                class="hand-drawn-border p-6 bg-white rotate-2 shadow-xl hover:rotate-0 transition-transform duration-500"
+              >
+                <img
+                  class="w-full aspect-square object-cover rounded-lg"
+                  data-alt="A warm and inviting illustrated avatar of Siti Tasya, a female artist with a creative and friendly expression. The illustration style matches her portfolio, featuring soft watercolor-like textures and organic lines. She is shown in her studio environment in Bekasi, surrounded by subtle artist tools and gentle lighting in a whimsical storybook style."
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuBkkgBlIZYXjVw9iJ2Kka6xc7-e6vFbtLbZ_01DeTtCB_UCbRONjG58KpCWtiucRpNi338yDlgI9S02h8MVmmxCIge--ReOSQyzq1IJCBGElEfPle_38lwFE_7JAWZ-gZaZcRbvLq4JGDkTZqX0NXo1CH2Uvyt62yfmTzbwgTVmiUBpakWhKHAGAC6AtEzzwiNuyMAiv0YRmzTl3CfKF8pqCD8v6xkcIIDZv1kaI4cRs3mREBbOA-7V8GCUBasJvnqy8v2TQSWrSXY"
+                />
+              </div>
+              <div class="absolute -bottom-10 -left-10 scribble-accent">
+                <span class="material-symbols-outlined text-8xl text-primary"
+                  >ink_pen</span
+                >
+              </div>
+            </div>
+          </div>
+          <div class="lg:col-span-7 order-1 lg:order-2 space-y-8">
+            <h2
+              class="text-mix text-headline-md md:text-6xl text-primary leading-tight"
+            >
+              A bit <span>about</span> <br />my <span>world...</span>
+            </h2>
+            <div
+              class="space-y-6 text-on-surface-variant text-lg md:text-xl leading-relaxed"
+            >
+              <p>
+                Hello! I'm Siti, a visual storyteller specialized in children's
+                book illustration and character design. Living in the vibrant
+                city of Bekasi, I draw inspiration from both urban hustle and
+                the quiet moments of imagination.
+              </p>
+              <p>
+                My work is characterized by organic textures, warm palettes, and
+                a sense of wonder. I believe every character has a secret story
+                waiting to be told through a single brushstroke.
+              </p>
+            </div>
+            <div
+              class="flex flex-col sm:flex-row items-start sm:items-center gap-6 pt-6"
+            >
+              <span
+                class="font-label-caps text-on-surface-variant uppercase tracking-[0.2em] text-sm"
+                >MY TOOLBOX:</span
+              >
+              <div class="flex gap-4">
+                <div
+                  class="w-16 h-16 bg-white shadow-md rounded-2xl flex items-center justify-center group hover:bg-primary/5 transition-all hover:-translate-y-1"
+                >
+                  <span
+                    class="material-symbols-outlined text-primary text-4xl group-hover:scale-110 transition-transform"
+                    >photo_library</span
+                  >
+                </div>
+                <div
+                  class="w-16 h-16 bg-white shadow-md rounded-2xl flex items-center justify-center group hover:bg-primary/5 transition-all hover:-translate-y-1"
+                >
+                  <span
+                    class="material-symbols-outlined text-primary text-4xl group-hover:scale-110 transition-transform"
+                    >format_paint</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Services Section with Illustrated Cards -->
+    <section class="py-32 bg-surface-container-low/50" id="services">
+      <div
+        class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop"
+      >
+        <div class="max-w-3xl mb-20 space-y-4">
+          <h2 class="text-mix text-headline-md md:text-6xl text-primary">
+            Magical <span>Services</span>
+          </h2>
+          <p class="font-body-lg text-xl text-on-surface-variant">
+            Bringing your creative visions to life with a gentle touch and
+            story-driven artistry.
+          </p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <!-- Card 1 -->
+          <div
+            class="bg-white p-10 rounded-[40px] hand-drawn-border group hover:shadow-2xl hover:shadow-secondary/10 transition-all duration-500 hover:-translate-y-2"
+          >
+            <div
+              class="w-20 h-20 mb-8 flex items-center justify-center bg-secondary-container/40 rounded-3xl group-hover:rotate-6 transition-transform"
+            >
+              <span class="material-symbols-outlined text-5xl text-secondary"
+                >menu_book</span
+              >
+            </div>
+            <h3 class="font-display-lg text-2xl font-bold text-on-surface mb-4">
+              Children's Books
+            </h3>
+            <p class="text-on-surface-variant mb-8 text-base leading-relaxed">
+              Full-page spreads and covers that spark childhood imagination and
+              wonder.
+            </p>
+            <div class="pt-4 border-t border-dashed border-outline-variant">
+              <span
+                class="font-label-caps text-primary font-black tracking-widest"
+                >FROM $1,000+</span
+              >
+            </div>
+          </div>
+          <!-- Card 2 -->
+          <div
+            class="bg-white p-10 rounded-[40px] hand-drawn-border group hover:shadow-2xl hover:shadow-primary/10 transition-all duration-500 hover:-translate-y-2 lg:translate-y-8"
+          >
+            <div
+              class="w-20 h-20 mb-8 flex items-center justify-center bg-primary-fixed/40 rounded-3xl group-hover:-rotate-6 transition-transform"
+            >
+              <span class="material-symbols-outlined text-5xl text-primary"
+                >face_6</span
+              >
+            </div>
+            <h3 class="font-display-lg text-2xl font-bold text-on-surface mb-4">
+              Character Design
+            </h3>
+            <p class="text-on-surface-variant mb-8 text-base leading-relaxed">
+              Developing unique personalities and expressive visual identities
+              for stories.
+            </p>
+            <div class="pt-4 border-t border-dashed border-outline-variant">
+              <span
+                class="font-label-caps text-primary font-black tracking-widest"
+                >FROM $350+</span
+              >
+            </div>
+          </div>
+          <!-- Card 3 -->
+          <div
+            class="bg-white p-10 rounded-[40px] hand-drawn-border group hover:shadow-2xl hover:shadow-tertiary/10 transition-all duration-500 hover:-translate-y-2"
+          >
+            <div
+              class="w-20 h-20 mb-8 flex items-center justify-center bg-tertiary-fixed/40 rounded-3xl group-hover:rotate-6 transition-transform"
+            >
+              <span class="material-symbols-outlined text-5xl text-tertiary"
+                >palette</span
+              >
+            </div>
+            <h3 class="font-display-lg text-2xl font-bold text-on-surface mb-4">
+              Brand Illustration
+            </h3>
+            <p class="text-on-surface-variant mb-8 text-base leading-relaxed">
+              Custom illustrations to give your brand a human, friendly, and
+              organic feel.
+            </p>
+            <div class="pt-4 border-t border-dashed border-outline-variant">
+              <span
+                class="font-label-caps text-primary font-black tracking-widest"
+                >FROM $500+</span
+              >
+            </div>
+          </div>
+          <!-- Card 4 -->
+          <div
+            class="bg-white p-10 rounded-[40px] hand-drawn-border group hover:shadow-2xl hover:shadow-outline/10 transition-all duration-500 hover:-translate-y-2 lg:translate-y-8"
+          >
+            <div
+              class="w-20 h-20 mb-8 flex items-center justify-center bg-surface-container-highest rounded-3xl group-hover:-rotate-6 transition-transform"
+            >
+              <span class="material-symbols-outlined text-5xl text-outline"
+                >frame_person</span
+              >
+            </div>
+            <h3 class="font-display-lg text-2xl font-bold text-on-surface mb-4">
+              Poster Art
+            </h3>
+            <p class="text-on-surface-variant mb-8 text-base leading-relaxed">
+              Limited edition prints and decorative botanical wall art for
+              collectors.
+            </p>
+            <div class="pt-4 border-t border-dashed border-outline-variant">
+              <span
+                class="font-label-caps text-primary font-black tracking-widest"
+                >FROM $200+</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Portfolio Gallery with Sketchbook Feel -->
+    <section class="py-32 px-margin-mobile md:px-margin-desktop" id="work">
+      <div class="max-w-container-max mx-auto">
+        <div
+          class="flex flex-col lg:flex-row justify-between items-end mb-20 gap-10"
+        >
+          <div class="max-w-2xl">
+            <h2 class="text-mix text-headline-md md:text-6xl text-primary mb-6">
+              Illustration <span>Gallery</span>
+            </h2>
+            <p class="font-body-lg text-xl text-on-surface-variant">
+              A window into my digital sketchbook—where paper textures meet
+              digital dreams.
+            </p>
+          </div>
+          <div class="flex flex-wrap gap-4">
+            <button
+              class="px-8 py-3 rounded-2xl font-bold bg-primary text-on-primary storybook-button text-sm"
+            >
+              All Stories
+            </button>
+            <button
+              class="px-8 py-3 rounded-2xl font-bold bg-white text-on-surface-variant hover:text-primary transition-all text-sm shadow-sm border border-primary/5"
+            >
+              Characters
+            </button>
+            <button
+              class="px-8 py-3 rounded-2xl font-bold bg-white text-on-surface-variant hover:text-primary transition-all text-sm shadow-sm border border-primary/5"
+            >
+              Books
+            </button>
+            <button
+              class="px-8 py-3 rounded-2xl font-bold bg-white text-on-surface-variant hover:text-primary transition-all text-sm shadow-sm border border-primary/5"
+            >
+              Packaging
+            </button>
+          </div>
+        </div>
+        <div class="masonry">
+          <!-- Gallery Items with creative sizes and rotation -->
+          <div class="gallery-item group">
+            <div
+              class="sketchbook-frame group-hover:-translate-y-2 transition-transform duration-500"
+            >
+              <img
+                class="w-full rounded-sm"
+                data-alt="A soft whimsical illustration for a children's book featuring a little girl whispering secrets to a giant, friendly fox in a moonlit forest. The art style uses textured brushes and a warm color palette of deep terracotta and muted sage greens. The mood is quiet, magical, and nostalgic."
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCwmm33xQVsrFDyUsj8mlCzz-4J_p7mTxuMvkEm95eiZgt7uPXdIsSXrGnbXSIDd0LWYY31rWvFItf1oQzWifstEPSRlWx2EJtjiECFXv3joEHxEabuSnhs37qflbIDCj4UqnsNYehAJ0-z748_cgDX-zs6qJo15-AUXVeHdFvDqgzfoOf1mf_JydOSGJypKd5u9hv7Ququtr-F3Y4hdaeiLSvxZ3IQSnLx5ZAC27ckzwDjA2JAJRPoJBmF67gjbYNre9E5yPfv3zM"
+              />
+              <div class="pt-4 px-2">
+                <p class="font-display-lg text-xl text-on-surface">
+                  The Fox's Secret
+                </p>
+                <p
+                  class="text-xs text-on-surface-variant font-bold uppercase tracking-widest mt-1"
+                >
+                  Book Illustration
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="gallery-item group">
+            <div
+              class="sketchbook-frame group-hover:-translate-y-2 transition-transform duration-500"
+            >
+              <img
+                class="w-full rounded-sm"
+                data-alt="A character design sheet for a whimsical baker character. The character is a soft, round figure with flour on her apron and a friendly smile, surrounded by floating cupcakes and stylized kitchen utensils. The style is hand-drawn digital illustration with a clean yet textured feel, using warm cream and brown tones."
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDkxC2xqP-E0KEFeG8WNKr8xgMDTNqKVJG9aFYGoKX-cuR_CJnLq4dh0yC2lttnOwJgqKJXw1Etcuz690Rsy_kE-BBibnaFuKiUKrKcY0QMICmN8fw2hzdDZdSYZA4mMSWyJxsmxPlJ6CvQsDT_MpYhfpxw-a1dBZnGE4WJYWE7eHUyn-lCSYuJz7a61VFEazKAoamaOBqmk49HfzLa4O3Ue1vXigGPa4k7KaQgaBzwq-hwupMrr0xN6elhTXihxKKFvWTAeXK_X7w"
+              />
+              <div class="pt-4 px-2">
+                <p class="font-display-lg text-xl text-on-surface">
+                  Chef Mimi's Bakery
+                </p>
+                <p
+                  class="text-xs text-on-surface-variant font-bold uppercase tracking-widest mt-1"
+                >
+                  Character Design
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="gallery-item group lg:mt-12">
+            <div
+              class="sketchbook-frame group-hover:-translate-y-2 transition-transform duration-500"
+            >
+              <img
+                class="w-full rounded-sm"
+                data-alt="A detailed children's book illustration showing a tea party under a giant mushroom. Small woodland creatures like mice and hedgehogs are sitting on tiny chairs. The lighting is soft and warm, filter through leaves. The color palette is rich with earth tones and soft pastels, following a storybook aesthetic."
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3bepzNH0ORwgxrGW7jeLRtUWnRf2gg0MkJCaqhKHFtWuge922tAH2UqJkUZOJzxcqMckVod3Y1iUrdh32FLMHURvmCn7YLEYt5dOk8HTb1L0g9r83wwvJJ1oa286PEr11M0_XyuMej1EYfQRH9aHVTsymqu6H-VVjtPslLgMykDERIbiy7F2kwkDSde-OSegBl-KvwazisIKsNLoWdqPdIgdVHK0loTVleweIuKJvNtOFAABnBcZJ0kgW1ba_Rrnh1ZI2bKucBDM"
+              />
+              <div class="pt-4 px-2">
+                <p class="font-display-lg text-xl text-on-surface">
+                  Under the Toadstool
+                </p>
+                <p
+                  class="text-xs text-on-surface-variant font-bold uppercase tracking-widest mt-1"
+                >
+                  Children's Book
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="gallery-item group">
+            <div
+              class="sketchbook-frame group-hover:-translate-y-2 transition-transform duration-500"
+            >
+              <img
+                class="w-full rounded-sm"
+                data-alt="A packaging design for a whimsical organic honey brand. The illustration features stylized bees and wildflowers in a fluid, organic style. The typography is hand-lettered and integrated into the floral arrangement. Colors include warm honey yellows and terracotta accents on a cream background."
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSw0W1cmMjszWNF5RkLbWr4gckmUCQEKVKPbWRegfv5gwV4HOM8oHUSET7XwNFa80IYG0-Lh8QwELe1levfV9FLHhSXEPBKnuIly2iRpL-rCsVPwcwV2IFBQGLvZ4z3z5zJE870IEex11FzUVNMkdTFiHaT2wPFULKk7vFrng4AC-TFTryPR0M3EULF86l0Ys4aBEm8cNegcgZXIAVHCPVkUSEiirGnX4jGKDZgeB_ky2H2NuHxjdQ10onjn_2zSSdZxt-fH_UGA8"
+              />
+              <div class="pt-4 px-2">
+                <p class="font-display-lg text-xl text-on-surface">
+                  Golden Nectar
+                </p>
+                <p
+                  class="text-xs text-on-surface-variant font-bold uppercase tracking-widest mt-1"
+                >
+                  Branding
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="gallery-item group lg:-mt-24">
+            <div
+              class="sketchbook-frame group-hover:-translate-y-2 transition-transform duration-500"
+            >
+              <img
+                class="w-full rounded-sm"
+                data-alt="A poster art piece featuring a collection of whimsical Indonesian botanicals. The plants are stylized with soft lines and delicate textures. The layout is editorial and framed with wide margins. The overall feel is that of a vintage field guide with a modern artistic twist."
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuC5KrLr9WnvuHDsx5IZ4hLnElmRFMeUYj9HPX6BHtJTsSzv-5mUekONbcxJpp0_DtU5_brdVoxjcIeEs2udSpqX0hJoE6Rv7llZ--k4DA62ds5MIaI_PZ3-YBXBA0h_7i0sCPQennvJROFrgDcUmylZY4PM6-m_6H_48J5E1-jGbcvfGuEK444foEy4v68upbvFXIFPUhCi2HMqIgve_fYNM1QOZdaDVAvtL4EvtztA53Dtj0h3HeUShbs34ScWEB5E0kyjB-ecwRE"
+              />
+              <div class="pt-4 px-2">
+                <p class="font-display-lg text-xl text-on-surface">
+                  Tropical Botanica
+                </p>
+                <p
+                  class="text-xs text-on-surface-variant font-bold uppercase tracking-widest mt-1"
+                >
+                  Poster Art
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Testimonials Section -->
+    <section class="py-32 relative">
+      <div class="absolute inset-0 bg-primary/5 torn-edge"></div>
+      <div
+        class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop relative"
+      >
+        <h2
+          class="text-mix text-headline-md md:text-5xl text-primary mb-20 text-center"
+        >
+          Kind <span>words</span> from <span>storytellers</span>
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+          <!-- Quote 1 -->
+          <div
+            class="bg-white p-12 rounded-[40px] shadow-xl shadow-primary/5 relative transform -rotate-1"
+          >
+            <span
+              class="material-symbols-outlined absolute -top-6 left-10 text-6xl text-primary/30"
+              >format_quote</span
+            >
+            <p
+              class="font-body-lg text-on-surface-variant italic mb-10 leading-relaxed text-lg"
+            >
+              "Siti didn't just illustrate my book; she breathed a soul into the
+              characters. Her attention to detail and ability to capture emotion
+              through color is truly magical."
+            </p>
+            <div class="flex items-center gap-5">
+              <div class="w-14 h-14 rounded-2xl bg-secondary-fixed-dim"></div>
+              <div>
+                <p class="font-bold text-on-surface text-lg">Elena R.</p>
+                <p
+                  class="text-xs text-on-surface-variant font-bold uppercase tracking-widest"
+                >
+                  Author, UK
+                </p>
+              </div>
+            </div>
+          </div>
+          <!-- Quote 2 -->
+          <div
+            class="bg-white p-12 rounded-[40px] shadow-xl shadow-primary/5 relative transform rotate-2 lg:translate-y-6"
+          >
+            <span
+              class="material-symbols-outlined absolute -top-6 left-10 text-6xl text-primary/30"
+              >format_quote</span
+            >
+            <p
+              class="font-body-lg text-on-surface-variant italic mb-10 leading-relaxed text-lg"
+            >
+              "Working with Siti on our branding was a dream. She captured the
+              handmade, organic feel we wanted perfectly. Our customers love her
+              illustrations!"
+            </p>
+            <div class="flex items-center gap-5">
+              <div class="w-14 h-14 rounded-2xl bg-primary-fixed-dim"></div>
+              <div>
+                <p class="font-bold text-on-surface text-lg">Mark J.</p>
+                <p
+                  class="text-xs text-on-surface-variant font-bold uppercase tracking-widest"
+                >
+                  Tea &amp; Co Founder
+                </p>
+              </div>
+            </div>
+          </div>
+          <!-- Quote 3 -->
+          <div
+            class="bg-white p-12 rounded-[40px] shadow-xl shadow-primary/5 relative transform -rotate-1 md:hidden lg:block"
+          >
+            <span
+              class="material-symbols-outlined absolute -top-6 left-10 text-6xl text-primary/30"
+              >format_quote</span
+            >
+            <p
+              class="font-body-lg text-on-surface-variant italic mb-10 leading-relaxed text-lg"
+            >
+              "Professional, imaginative, and incredibly talented. Siti
+              delivered more than what was briefed. She is now our go-to
+              illustrator for all poster art."
+            </p>
+            <div class="flex items-center gap-5">
+              <div class="w-14 h-14 rounded-2xl bg-tertiary-fixed"></div>
+              <div>
+                <p class="font-bold text-on-surface text-lg">Siska K.</p>
+                <p
+                  class="text-xs text-on-surface-variant font-bold uppercase tracking-widest"
+                >
+                  Event Organizer
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Contact Section with Deep Earthy Tones -->
+    <section
+      class="py-32 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto overflow-hidden"
+      id="contact"
+    >
+      <div class="asymmetric-grid gap-16 items-start">
+        <div class="col-span-12 lg:col-span-6 space-y-10">
+          <h2
+            class="text-mix text-display-lg-mobile md:text-7xl text-primary leading-[1.1]"
+          >
+            Let's <span>create</span> something <span>magical</span> together
+          </h2>
+          <p
+            class="font-body-lg text-2xl text-on-surface-variant leading-relaxed"
+          >
+            Whether you have a book idea, a brand project, or just want to say
+            hi, my inbox is always open for new adventures.
+          </p>
+          <div class="space-y-8 pt-4">
+            <div class="flex items-center gap-6 group">
+              <div
+                class="w-16 h-16 bg-primary-container text-on-primary-container rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform"
+              >
+                <span class="material-symbols-outlined text-3xl">mail</span>
+              </div>
+              <span class="font-display-lg text-2xl">hello@sititasya.com</span>
+            </div>
+            <div class="flex items-center gap-6 group">
+              <div
+                class="w-16 h-16 bg-secondary-container text-on-secondary-container rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform"
+              >
+                <span class="material-symbols-outlined text-3xl"
+                  >location_on</span
+                >
+              </div>
+              <span class="font-display-lg text-2xl">Bekasi, Indonesia</span>
+            </div>
+          </div>
+          <div class="flex gap-6 pt-10">
+            <a
+              class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center hand-drawn-border hover:bg-primary hover:text-white transition-all hover:-translate-y-2 shadow-lg"
+              href="#"
+            >
+              <span class="font-bold text-xl">In</span>
+            </a>
+            <a
+              class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center hand-drawn-border hover:bg-primary hover:text-white transition-all hover:-translate-y-2 shadow-lg"
+              href="#"
+            >
+              <span class="font-bold text-xl">Ig</span>
+            </a>
+            <a
+              class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center hand-drawn-border hover:bg-primary hover:text-white transition-all hover:-translate-y-2 shadow-lg"
+              href="#"
+            >
+              <span class="font-bold text-xl">Be</span>
+            </a>
+          </div>
+        </div>
+        <div class="col-span-12 lg:col-span-6 relative">
+          <div
+            class="absolute -top-12 -right-12 w-48 h-48 watercolor-blob from-tertiary-fixed rotate-45 -z-10"
+          ></div>
+          <form
+            class="bg-primary/5 p-10 md:p-16 rounded-[60px] hand-drawn-border space-y-8 relative backdrop-blur-sm"
+          >
+            <div class="space-y-2">
+              <label
+                class="block font-label-caps text-primary mb-2 tracking-[0.2em]"
+                >NAME</label
+              >
+              <input
+                class="w-full bg-white/80 border-2 border-primary/5 rounded-2xl px-6 py-5 focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all text-lg"
+                placeholder="Your name"
+                type="text"
+              />
+            </div>
+            <div class="space-y-2">
+              <label
+                class="block font-label-caps text-primary mb-2 tracking-[0.2em]"
+                >EMAIL</label
+              >
+              <input
+                class="w-full bg-white/80 border-2 border-primary/5 rounded-2xl px-6 py-5 focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all text-lg"
+                placeholder="Your email address"
+                type="email"
+              />
+            </div>
+            <div class="space-y-2">
+              <label
+                class="block font-label-caps text-primary mb-2 tracking-[0.2em]"
+                >MESSAGE</label
+              >
+              <textarea
+                class="w-full bg-white/80 border-2 border-primary/5 rounded-2xl px-6 py-5 focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all text-lg"
+                placeholder="Tell me about your magic project..."
+                rows="5"
+              ></textarea>
+            </div>
+            <button
+              class="w-full bg-primary text-on-primary py-6 rounded-2xl storybook-button font-bold text-xl shadow-2xl shadow-primary/30"
+              type="submit"
+            >
+              Send Magic ✨
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+    <!-- Footer -->
+    <footer class="relative mt-20 pt-32 pb-16 overflow-hidden">
+      <!-- Section Divider -->
+      <div
+        class="absolute top-0 left-0 w-full h-32 bg-surface-container-highest torn-edge transform -translate-y-1/2"
+      ></div>
+      <div
+        class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop"
+      >
+        <div
+          class="flex flex-col lg:flex-row justify-between items-center gap-12 border-b border-primary/10 pb-16"
+        >
+          <span class="font-display-lg text-5xl text-primary italic font-bold"
+            >Siti Tasya</span
+          >
+          <div
+            class="flex flex-wrap justify-center gap-10 font-body-lg text-lg"
+          >
+            <a
+              class="text-on-surface-variant hover:text-primary transition-colors hover:scale-110 transition-transform"
+              href="#"
+              >Instagram</a
+            >
+            <a
+              class="text-on-surface-variant hover:text-primary transition-colors hover:scale-110 transition-transform"
+              href="#"
+              >Twitter</a
+            >
+            <a
+              class="text-on-surface-variant hover:text-primary transition-colors hover:scale-110 transition-transform"
+              href="#"
+              >Behance</a
+            >
+            <a
+              class="text-on-surface-variant hover:text-primary transition-colors hover:scale-110 transition-transform"
+              href="#"
+              >Email</a
+            >
+          </div>
+        </div>
+        <div
+          class="pt-10 flex flex-col md:flex-row justify-between items-center gap-6"
+        >
+          <p
+            class="font-body-md text-on-surface-variant text-center md:text-left text-lg"
+          >
+            © 2024 Siti Tasya. Hand-drawn with love in Bekasi.
+          </p>
+          <div class="flex items-center gap-2 text-primary">
+            <span class="material-symbols-outlined text-sm">palette</span>
+            <span class="font-label-caps">Crafted with magic</span>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <script>
+      // Micro-interactions for buttons
+      document.querySelectorAll(".storybook-button").forEach((button) => {
+        button.addEventListener("mousedown", () => {
+          button.style.transform = "translateY(5px)";
+          button.style.borderBottomWidth = "0px";
+        });
+        button.addEventListener("mouseup", () => {
+          button.style.transform = "translateY(2px)";
+          button.style.borderBottomWidth = "3px";
+        });
+        button.addEventListener("mouseleave", () => {
+          button.style.transform = "";
+          button.style.borderBottomWidth = "";
+        });
+      });
+
+      // Parallax & Floating effect for doodles
+      window.addEventListener("scroll", () => {
+        const doodles = document.querySelectorAll(".scribble-accent");
+        const scrolled = window.pageYOffset;
+        doodles.forEach((doodle, index) => {
+          const speed = 0.05 + index * 0.02;
+          const rotationSpeed = index % 2 === 0 ? 0.03 : -0.03;
+          doodle.style.transform = `translateY(${scrolled * speed}px) rotate(${scrolled * rotationSpeed}deg)`;
+        });
+      });
+    </script>
+  </body>
+</html>
