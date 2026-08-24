@@ -476,7 +476,11 @@ app.put('/api/studio/settings', async (req, res) => {
   }
 })
 
-// Start Express Server
-app.listen(PORT, () => {
-  console.log(`🚀 PostgreSQL Express API Server berjalan di http://localhost:${PORT}`)
-})
+// Start Express Server only when running locally (not in serverless import)
+if (process.env.NODE_ENV !== 'test' && !process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`🚀 PostgreSQL Express API Server berjalan di http://localhost:${PORT}`)
+  })
+}
+
+export default app

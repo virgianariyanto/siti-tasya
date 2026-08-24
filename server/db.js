@@ -1,16 +1,19 @@
-import pg from 'pg'
+import { Pool } from 'pg'
 import dotenv from 'dotenv'
 
 dotenv.config()
 
-const { Pool } = pg
+const connectionString =
+  process.env.DATABASE_URL || 'postgres://postgres@localhost:5432/siti_tasya_db'
+
+const isLocalhost = connectionString.includes('localhost') || connectionString.includes('127.0.0.1')
 
 export const pool = new Pool({
-  connectionString:
-    process.env.DATABASE_URL || 'postgres://postgres@localhost:5432/siti_tasya_db',
+  connectionString,
+  ssl: !isLocalhost ? { rejectUnauthorized: false } : false,
   max: 10,
   idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 5000,
+  connectionTimeoutMillis: 10000,
 })
 
 // Auto Migration & Seed Function
