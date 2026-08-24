@@ -13,18 +13,68 @@ app.use(cors())
 app.use(express.json({ limit: '50mb' }))
 app.use(express.urlencoded({ extended: true, limit: '50mb' }))
 
-// Initialize Database on server start
-initDatabase().catch((err) => {
-  console.error('Database initialization error:', err)
-})
+// Database initialization singleton promise for Serverless / Local environments
+let isInitialized = false
+let initPromise = null
 
-// Health Check
+const ensureDb = async (req, res, next) => {
+  // Allow health check without blocking or let health check trigger initialization
+  if (!isInitialized) {
+    if (!initPromise) {
+      initPromise = initDatabase()
+        .then(() => {
+          isInitialized = true
+          console.log('✅ PostgreSQL database ready for API requests')
+        })
+        .catch((err) => {
+          initPromise = null
+          console.error('❌ Failed to initialize database:', err)
+          return res.status(500).json({
+            success: false,
+            error: 'DATABASE_INIT_FAILED',
+            message: `Gagal menginisialisasi database: ${err.message}. Periksa konfigurasi DATABASE_URL di Environment Variables.`,
+          })
+        })
+    }
+    const result = await initPromise
+    // If response was already sent on error, return
+    if (result && result.headersSent) return
+    if (!isInitialized) return
+  }
+  next()
+}
+
+// Attach ensureDb middleware to all routes
+app.use(ensureDb)
+
+// Health Check with detailed diagnostic info
 app.get('/api/health', async (req, res) => {
   try {
     const result = await pool.query('SELECT NOW() as db_time;')
-    res.json({ status: 'ok', database: 'connected', db_time: result.rows[0].db_time })
+    const adminCheck = await pool.query('SELECT id, email, name, role FROM admin_users LIMIT 5;')
+    const tablesCheck = await pool.query(`
+      SELECT table_name FROM information_schema.tables 
+      WHERE table_schema = 'public';
+    `)
+    res.json({
+      status: 'ok',
+      database: 'connected',
+      db_time: result.rows[0].db_time,
+      tables: tablesCheck.rows.map((r) => r.table_name),
+      adminUsers: adminCheck.rows,
+    })
   } catch (err) {
     res.status(500).json({ status: 'error', message: err.message })
+  }
+})
+
+// Force Seed Endpoint (in case tables need re-verification)
+app.post('/api/seed', async (req, res) => {
+  try {
+    await initDatabase()
+    res.json({ success: true, message: 'Database re-seeded successfully' })
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message })
   }
 })
 
@@ -60,7 +110,11 @@ app.post('/api/auth/login', async (req, res) => {
       })
     }
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message })
+    console.error('Login error in PostgreSQL query:', err)
+    res.status(500).json({
+      success: false,
+      message: `Database Error: ${err.message}`,
+    })
   }
 })
 

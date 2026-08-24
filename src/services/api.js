@@ -9,9 +9,23 @@ async function request(endpoint, options = {}) {
       },
       ...options,
     })
-    const data = await res.json()
+
+    let data
+    const contentType = res.headers.get('content-type') || ''
+    if (contentType.includes('application/json')) {
+      data = await res.json()
+    } else {
+      const text = await res.text()
+      try {
+        data = JSON.parse(text)
+      } catch {
+        data = { message: text || `HTTP ${res.status}` }
+      }
+    }
+
     if (!res.ok) {
-      throw new Error(data.message || data.error || 'Terjadi kesalahan pada server')
+      const errMsg = data.message || data.error || `Error ${res.status}: Terjadi kesalahan server.`
+      throw new Error(errMsg)
     }
     return data
   } catch (err) {

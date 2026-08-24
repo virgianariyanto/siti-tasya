@@ -1,0 +1,115 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model AdminUser {
+  id             Int      @id @default(autoincrement())
+  email          String   @unique
+  secondaryEmail String?  @map("secondary_email")
+  password       String
+  name           String
+  role           String   @default("admin")
+  title          String?
+  avatar         String?
+  updatedAt      DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@map("admin_users")
+}
+
+model SiteContent {
+  sectionKey String   @id @map("section_key")
+  content    Json
+  updatedAt  DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@map("site_content")
+}
+
+model Service {
+  id          String   @id
+  icon        String
+  title       String
+  description String?
+  price       String
+  iconColor   String?  @map("icon_color")
+  bgColor     String?  @map("bg_color")
+  hoverShadow String?  @map("hover_shadow")
+  rotation    String?
+  offsetClass String?  @map("offset_class")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("services")
+}
+
+model GalleryItem {
+  id           String   @id
+  title        String
+  categoryTag  String   @map("category_tag")
+  categoryKey  String   @map("category_key")
+  imgSrc       String   @map("img_src")
+  alt          String?
+  extraClasses String?  @map("extra_classes")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@map("gallery_items")
+}
+
+model Testimonial {
+  id        String   @id
+  author    String
+  role      String
+  quote     String
+  bgColor   String?  @map("bg_color")
+  transform String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("testimonials")
+}
+
+model Commission {
+  id            String   @id
+  clientName    String   @map("client_name")
+  clientCompany String?  @map("client_company")
+  clientEmail   String?  @map("client_email")
+  projectTitle  String   @map("project_title")
+  category      String?
+  budget        String?
+  deadline      String?
+  status        String?
+  progress      Int      @default(0)
+  deliverables  String?
+  notes         String?
+  updatedAt     String?  @map("updated_at")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  @@map("commissions")
+}
+
+model Inquiry {
+  id          String   @id
+  name        String
+  email       String
+  service     String?
+  budgetRange String?  @map("budget_range")
+  message     String
+  date        String?
+  isRead      Boolean  @default(false) @map("is_read")
+  status      String   @default("Menunggu Balasan")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("inquiries")
+}
+
+model StudioSetting {
+  id                   Int      @id @default(1)
+  isOpenForCommissions Boolean  @default(true) @map("is_open_for_commissions")
+  currentSlot          String?  @map("current_slot")
+  statusNotice         String?  @map("status_notice")
+  updatedAt            DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@map("studio_settings")
+}

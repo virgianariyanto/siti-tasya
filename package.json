@@ -9,9 +9,12 @@
     "dev:all": "concurrently \"vite\" \"node server/index.js\"",
     "build": "vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "studio": "prisma studio",
+    "prisma:push": "prisma db push"
   },
   "dependencies": {
+    "@prisma/client": "6.4.1",
     "concurrently": "^10.0.5",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
@@ -25,6 +28,7 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.3",
     "oxlint": "^1.71.0",
+    "prisma": "6.4.1",
     "vite": "^8.1.1"
   }
 }

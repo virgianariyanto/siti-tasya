@@ -536,9 +536,17 @@ export async function initDatabase() {
     }
 
     console.log('🎉 Migrasi dan Seeding PostgreSQL berhasil 100%!')
+    return true
   } catch (err) {
     console.error('❌ Terjadi kesalahan saat inisialisasi database:', err)
+    throw err
   } finally {
-    client.release()
+    if (client) {
+      try {
+        client.release()
+      } catch (e) {
+        console.error('Error releasing client:', e)
+      }
+    }
   }
 }
