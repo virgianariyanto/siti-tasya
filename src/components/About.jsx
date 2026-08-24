@@ -1,4 +1,8 @@
+import { useContent } from '../context/useContent'
+
 export default function About() {
+  const { about } = useContent()
+
   return (
     <section className="py-32 relative overflow-hidden" id="about">
       {/* Section Divider (Organic Shape) */}
@@ -10,9 +14,8 @@ export default function About() {
               <div className="hand-drawn-border p-6 bg-white rotate-2 shadow-xl hover:rotate-0 transition-transform duration-500">
                 <img
                   className="w-full aspect-square object-cover rounded-lg"
-                  data-alt="A warm and inviting illustrated avatar of Siti Tasya, a female artist with a creative and friendly expression. The illustration style matches her portfolio, featuring soft watercolor-like textures and organic lines. She is shown in her studio environment in Bekasi, surrounded by subtle artist tools and gentle lighting in a whimsical storybook style."
-                  src="/images/artist_avatar.png"
-                  alt="Siti Tasya Avatar"
+                  src={about.avatarUrl || '/images/artist_avatar.png'}
+                  alt={about.avatarAlt || 'Artist Avatar'}
                 />
               </div>
               <div className="absolute -bottom-10 -left-10 scribble-accent">
@@ -22,33 +25,35 @@ export default function About() {
           </div>
           <div className="lg:col-span-7 order-1 lg:order-2 space-y-8">
             <h2 className="text-mix text-headline-md md:text-6xl text-primary leading-tight">
-              A bit <span>about</span> <br />my <span>world...</span>
+              {about.headlinePart1 || 'A bit'}{' '}
+              <span>{about.headlinePart2 || 'about'}</span> <br />
+              {about.headlinePart3 || 'my'}{' '}
+              <span>{about.headlinePart4 || 'world...'}</span>
             </h2>
             <div className="space-y-6 text-on-surface-variant text-lg md:text-xl leading-relaxed">
-              <p>
-                Hello! I'm Siti, a visual storyteller specialized in children's book illustration and character design. Living in the vibrant city of Bekasi, I draw inspiration from both urban hustle and the quiet moments of imagination.
-              </p>
-              <p>
-                My work is characterized by organic textures, warm palettes, and a sense of wonder. I believe every character has a secret story waiting to be told through a single brushstroke.
-              </p>
+              <p>{about.paragraph1}</p>
+              {about.paragraph2 && <p>{about.paragraph2}</p>}
             </div>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 pt-6">
-              <span className="font-label-caps text-on-surface-variant uppercase tracking-[0.2em] text-sm">
-                MY TOOLBOX:
-              </span>
-              <div className="flex gap-4">
-                <div className="w-16 h-16 bg-white shadow-md rounded-2xl flex items-center justify-center group hover:bg-primary/5 transition-all hover:-translate-y-1">
-                  <span className="material-symbols-outlined text-primary text-4xl group-hover:scale-110 transition-transform">
-                    photo_library
-                  </span>
-                </div>
-                <div className="w-16 h-16 bg-white shadow-md rounded-2xl flex items-center justify-center group hover:bg-primary/5 transition-all hover:-translate-y-1">
-                  <span className="material-symbols-outlined text-primary text-4xl group-hover:scale-110 transition-transform">
-                    format_paint
-                  </span>
+            {about.toolboxIcons && about.toolboxIcons.length > 0 && (
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 pt-6">
+                <span className="font-label-caps text-on-surface-variant uppercase tracking-[0.2em] text-sm">
+                  {about.toolboxLabel || 'MY TOOLBOX:'}
+                </span>
+                <div className="flex gap-4 flex-wrap">
+                  {about.toolboxIcons.map((tool) => (
+                    <div
+                      key={tool.id || tool.name}
+                      title={tool.name}
+                      className="w-16 h-16 bg-white shadow-md rounded-2xl flex items-center justify-center group hover:bg-primary/5 transition-all hover:-translate-y-1"
+                    >
+                      <span className="material-symbols-outlined text-primary text-4xl group-hover:scale-110 transition-transform">
+                        {tool.icon}
+                      </span>
+                    </div>
+                  ))}
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
