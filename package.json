@@ -5,11 +5,18 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "server": "node server/index.js",
+    "dev:all": "concurrently \"vite\" \"node server/index.js\"",
     "build": "vite build",
     "lint": "oxlint",
     "preview": "vite preview"
   },
   "dependencies": {
+    "concurrently": "^10.0.5",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "pg": "^8.23.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7"
   },

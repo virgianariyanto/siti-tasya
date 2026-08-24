@@ -1,5 +1,11 @@
 import { useState, useEffect } from 'react'
 import { ContentContext } from './content-core'
+import {
+  contentApi,
+  servicesApi,
+  galleryApi,
+  testimonialsApi,
+} from '../services/api'
 
 const DEFAULT_CONTENT = {
   hero: {
@@ -43,140 +49,17 @@ const DEFAULT_CONTENT = {
     sectionTitle: 'Magical Services',
     sectionSubtitle:
       'Bringing your creative visions to life with a gentle touch and story-driven artistry.',
-    items: [
-      {
-        id: 'srv-1',
-        icon: 'menu_book',
-        title: "Children's Books",
-        description: 'Full-page spreads and covers that spark childhood imagination and wonder.',
-        price: 'FROM $1,000+',
-        iconColor: 'text-secondary',
-        bgColor: 'bg-secondary-container/40',
-        hoverShadow: 'hover:shadow-secondary/10',
-        rotation: 'group-hover:rotate-6',
-        offset: '',
-      },
-      {
-        id: 'srv-2',
-        icon: 'face_6',
-        title: 'Character Design',
-        description: 'Developing unique personalities and expressive visual identities for stories.',
-        price: 'FROM $350+',
-        iconColor: 'text-primary',
-        bgColor: 'bg-primary-fixed/40',
-        hoverShadow: 'hover:shadow-primary/10',
-        rotation: 'group-hover:-rotate-6',
-        offset: 'lg:translate-y-8',
-      },
-      {
-        id: 'srv-3',
-        icon: 'palette',
-        title: 'Brand Illustration',
-        description: 'Custom illustrations to give your brand a human, friendly, and organic feel.',
-        price: 'FROM $500+',
-        iconColor: 'text-tertiary',
-        bgColor: 'bg-tertiary-fixed/40',
-        hoverShadow: 'hover:shadow-tertiary/10',
-        rotation: 'group-hover:rotate-6',
-        offset: '',
-      },
-      {
-        id: 'srv-4',
-        icon: 'frame_person',
-        title: 'Poster Art',
-        description: 'Limited edition prints and decorative botanical wall art for collectors.',
-        price: 'FROM $200+',
-        iconColor: 'text-outline',
-        bgColor: 'bg-surface-container-highest',
-        hoverShadow: 'hover:shadow-outline/10',
-        rotation: 'group-hover:-rotate-6',
-        offset: 'lg:translate-y-8',
-      },
-    ],
+    items: [],
   },
   gallery: {
     sectionTitle: 'Illustration Gallery',
     sectionSubtitle: 'A window into my digital sketchbook—where paper textures meet digital dreams.',
     categories: ['All Stories', 'Characters', 'Books', 'Packaging'],
-    items: [
-      {
-        id: 'gal-1',
-        title: "The Fox's Secret",
-        categoryTag: 'Book Illustration',
-        categoryKey: 'Books',
-        imgSrc: '/images/fox_secret_illustration.png',
-        alt: 'A soft whimsical illustration for a children\'s book featuring a little girl whispering secrets to a giant, friendly fox in a moonlit forest.',
-        extraClasses: '',
-      },
-      {
-        id: 'gal-2',
-        title: "Chef Mimi's Bakery",
-        categoryTag: 'Character Design',
-        categoryKey: 'Characters',
-        imgSrc: '/images/chef_mimi_character.png',
-        alt: 'A character design sheet for a whimsical baker character with flour on her apron and a friendly smile.',
-        extraClasses: '',
-      },
-      {
-        id: 'gal-3',
-        title: 'Under the Toadstool',
-        categoryTag: "Children's Book",
-        categoryKey: 'Books',
-        imgSrc: '/images/mushroom_tea_party.png',
-        alt: 'A detailed children\'s book illustration showing a tea party under a giant mushroom.',
-        extraClasses: 'lg:mt-12',
-      },
-      {
-        id: 'gal-4',
-        title: 'Golden Nectar',
-        categoryTag: 'Branding',
-        categoryKey: 'Packaging',
-        imgSrc: '/images/honey_packaging_design.png',
-        alt: 'A packaging design for a whimsical organic honey brand.',
-        extraClasses: '',
-      },
-      {
-        id: 'gal-5',
-        title: 'Tropical Botanica',
-        categoryTag: 'Poster Art',
-        categoryKey: 'Packaging',
-        imgSrc: '/images/tropical_botanica_poster.png',
-        alt: 'A poster art piece featuring a collection of whimsical Indonesian botanicals.',
-        extraClasses: 'lg:-mt-24',
-      },
-    ],
+    items: [],
   },
   testimonials: {
     sectionTitle: 'Kind words from storytellers',
-    items: [
-      {
-        id: 'test-1',
-        quote:
-          '"Siti didn\'t just illustrate my book; she breathed a soul into the characters. Her attention to detail and ability to capture emotion through color is truly magical."',
-        author: 'Elena R.',
-        role: 'Author, UK',
-        bgColor: 'bg-secondary-fixed-dim',
-        transform: 'transform -rotate-1',
-      },
-      {
-        id: 'test-2',
-        quote:
-          '"Working with Siti on our branding was a dream. She captured the handmade, organic feel we wanted perfectly. Our customers love her illustrations!"',
-        author: 'Mark J.',
-        role: 'Tea & Co Founder',
-        bgColor: 'bg-primary-fixed-dim',
-        transform: 'transform rotate-2 lg:translate-y-6',
-      },
-      {
-        id: 'test-3',
-        quote:
-          '"Professional, imaginative, and incredibly talented. Siti delivered more than what was briefed. She is now our go-to illustrator for all poster art."',
-        author: 'Siska K.',
-        role: 'Event Organizer',
-        bgColor: 'bg-tertiary-fixed',
-        transform: 'transform -rotate-1 md:hidden lg:block',
-      },
-    ],
+    items: [],
   },
   contact: {
     sectionTitle: "Let's create something magical together",
@@ -204,68 +87,89 @@ const DEFAULT_CONTENT = {
 }
 
 export function ContentProvider({ children }) {
-  const [content, setContent] = useState(() => {
-    try {
-      const saved = localStorage.getItem('siti_tasya_dynamic_content')
-      return saved ? JSON.parse(saved) : DEFAULT_CONTENT
-    } catch {
-      return DEFAULT_CONTENT
-    }
-  })
+  const [content, setContent] = useState(DEFAULT_CONTENT)
 
-  // Save changes to localStorage
+  // Fetch all dynamic content from PostgreSQL on mount
   useEffect(() => {
-    try {
-      localStorage.setItem('siti_tasya_dynamic_content', JSON.stringify(content))
-    } catch (e) {
-      console.error(e)
+    async function loadContent() {
+      try {
+        const [siteData, srvs, gals, tests] = await Promise.all([
+          contentApi.getAll().catch(() => ({})),
+          servicesApi.getAll().catch(() => []),
+          galleryApi.getAll().catch(() => []),
+          testimonialsApi.getAll().catch(() => []),
+        ])
+
+        setContent((prev) => ({
+          ...prev,
+          hero: siteData.hero || prev.hero,
+          about: siteData.about || prev.about,
+          contact: siteData.contact || prev.contact,
+          footer: siteData.footer || prev.footer,
+          services: {
+            ...prev.services,
+            items: srvs || [],
+          },
+          gallery: {
+            ...prev.gallery,
+            items: gals || [],
+          },
+          testimonials: {
+            ...prev.testimonials,
+            items: tests || [],
+          },
+        }))
+      } catch (err) {
+        console.error('Gagal mengambil konten dari PostgreSQL:', err)
+      }
     }
-  }, [content])
+
+    loadContent()
+  }, [])
 
   // Section updaters
-  const updateHero = (newHeroData) => {
+  const updateHero = async (newHeroData) => {
     setContent((prev) => ({
       ...prev,
       hero: { ...prev.hero, ...newHeroData },
     }))
+    try {
+      await contentApi.updateSection('hero', newHeroData)
+    } catch (err) {
+      console.error('Gagal menyimpan Hero ke PostgreSQL:', err)
+    }
   }
 
-  const updateAbout = (newAboutData) => {
+  const updateAbout = async (newAboutData) => {
     setContent((prev) => ({
       ...prev,
       about: { ...prev.about, ...newAboutData },
     }))
+    try {
+      await contentApi.updateSection('about', newAboutData)
+    } catch (err) {
+      console.error('Gagal menyimpan About ke PostgreSQL:', err)
+    }
   }
 
   // Services CRUD
-  const updateServicesMeta = (newMeta) => {
-    setContent((prev) => ({
-      ...prev,
-      services: { ...prev.services, ...newMeta },
-    }))
-  }
-
-  const addService = (newService) => {
-    const serviceWithId = {
-      ...newService,
-      id: `srv-${Date.now()}`,
-      bgColor: newService.bgColor || 'bg-secondary-container/40',
-      iconColor: newService.iconColor || 'text-primary',
-      hoverShadow: 'hover:shadow-primary/10',
-      rotation: 'group-hover:rotate-6',
-      offset: '',
+  const addService = async (newService) => {
+    try {
+      const created = await servicesApi.create(newService)
+      setContent((prev) => ({
+        ...prev,
+        services: {
+          ...prev.services,
+          items: [...prev.services.items, created],
+        },
+      }))
+      return created
+    } catch (err) {
+      console.error('Gagal menambahkan layanan ke PostgreSQL:', err)
     }
-    setContent((prev) => ({
-      ...prev,
-      services: {
-        ...prev.services,
-        items: [...prev.services.items, serviceWithId],
-      },
-    }))
-    return serviceWithId
   }
 
-  const updateService = (id, updatedService) => {
+  const updateService = async (id, updatedService) => {
     setContent((prev) => ({
       ...prev,
       services: {
@@ -275,9 +179,14 @@ export function ContentProvider({ children }) {
         ),
       },
     }))
+    try {
+      await servicesApi.update(id, updatedService)
+    } catch (err) {
+      console.error('Gagal memperbarui layanan di PostgreSQL:', err)
+    }
   }
 
-  const deleteService = (id) => {
+  const deleteService = async (id) => {
     setContent((prev) => ({
       ...prev,
       services: {
@@ -285,33 +194,31 @@ export function ContentProvider({ children }) {
         items: prev.services.items.filter((item) => String(item.id) !== String(id)),
       },
     }))
+    try {
+      await servicesApi.delete(id)
+    } catch (err) {
+      console.error('Gagal menghapus layanan dari PostgreSQL:', err)
+    }
   }
 
   // Gallery CRUD
-  const updateGalleryMeta = (newMeta) => {
-    setContent((prev) => ({
-      ...prev,
-      gallery: { ...prev.gallery, ...newMeta },
-    }))
-  }
-
-  const addGalleryItem = (newItem) => {
-    const itemWithId = {
-      ...newItem,
-      id: `gal-${Date.now()}`,
-      extraClasses: '',
+  const addGalleryItem = async (newItem) => {
+    try {
+      const created = await galleryApi.create(newItem)
+      setContent((prev) => ({
+        ...prev,
+        gallery: {
+          ...prev.gallery,
+          items: [created, ...prev.gallery.items],
+        },
+      }))
+      return created
+    } catch (err) {
+      console.error('Gagal menambahkan karya ke PostgreSQL:', err)
     }
-    setContent((prev) => ({
-      ...prev,
-      gallery: {
-        ...prev.gallery,
-        items: [itemWithId, ...prev.gallery.items],
-      },
-    }))
-    return itemWithId
   }
 
-  const updateGalleryItem = (id, updatedItem) => {
+  const updateGalleryItem = async (id, updatedItem) => {
     setContent((prev) => ({
       ...prev,
       gallery: {
@@ -321,9 +228,14 @@ export function ContentProvider({ children }) {
         ),
       },
     }))
+    try {
+      await galleryApi.update(id, updatedItem)
+    } catch (err) {
+      console.error('Gagal memperbarui karya di PostgreSQL:', err)
+    }
   }
 
-  const deleteGalleryItem = (id) => {
+  const deleteGalleryItem = async (id) => {
     setContent((prev) => ({
       ...prev,
       gallery: {
@@ -331,34 +243,31 @@ export function ContentProvider({ children }) {
         items: prev.gallery.items.filter((item) => String(item.id) !== String(id)),
       },
     }))
+    try {
+      await galleryApi.delete(id)
+    } catch (err) {
+      console.error('Gagal menghapus karya dari PostgreSQL:', err)
+    }
   }
 
   // Testimonials CRUD
-  const updateTestimonialsMeta = (newMeta) => {
-    setContent((prev) => ({
-      ...prev,
-      testimonials: { ...prev.testimonials, ...newMeta },
-    }))
-  }
-
-  const addTestimonial = (newItem) => {
-    const itemWithId = {
-      ...newItem,
-      id: `test-${Date.now()}`,
-      bgColor: newItem.bgColor || 'bg-secondary-fixed-dim',
-      transform: 'transform -rotate-1',
+  const addTestimonial = async (newItem) => {
+    try {
+      const created = await testimonialsApi.create(newItem)
+      setContent((prev) => ({
+        ...prev,
+        testimonials: {
+          ...prev.testimonials,
+          items: [...prev.testimonials.items, created],
+        },
+      }))
+      return created
+    } catch (err) {
+      console.error('Gagal menambahkan testimoni ke PostgreSQL:', err)
     }
-    setContent((prev) => ({
-      ...prev,
-      testimonials: {
-        ...prev.testimonials,
-        items: [...prev.testimonials.items, itemWithId],
-      },
-    }))
-    return itemWithId
   }
 
-  const updateTestimonial = (id, updatedItem) => {
+  const updateTestimonial = async (id, updatedItem) => {
     setContent((prev) => ({
       ...prev,
       testimonials: {
@@ -368,9 +277,14 @@ export function ContentProvider({ children }) {
         ),
       },
     }))
+    try {
+      await testimonialsApi.update(id, updatedItem)
+    } catch (err) {
+      console.error('Gagal memperbarui testimoni di PostgreSQL:', err)
+    }
   }
 
-  const deleteTestimonial = (id) => {
+  const deleteTestimonial = async (id) => {
     setContent((prev) => ({
       ...prev,
       testimonials: {
@@ -378,21 +292,36 @@ export function ContentProvider({ children }) {
         items: prev.testimonials.items.filter((item) => String(item.id) !== String(id)),
       },
     }))
+    try {
+      await testimonialsApi.delete(id)
+    } catch (err) {
+      console.error('Gagal menghapus testimoni dari PostgreSQL:', err)
+    }
   }
 
   // Contact & Footer
-  const updateContact = (newContactData) => {
+  const updateContact = async (newContactData) => {
     setContent((prev) => ({
       ...prev,
       contact: { ...prev.contact, ...newContactData },
     }))
+    try {
+      await contentApi.updateSection('contact', newContactData)
+    } catch (err) {
+      console.error('Gagal menyimpan Kontak ke PostgreSQL:', err)
+    }
   }
 
-  const updateFooter = (newFooterData) => {
+  const updateFooter = async (newFooterData) => {
     setContent((prev) => ({
       ...prev,
       footer: { ...prev.footer, ...newFooterData },
     }))
+    try {
+      await contentApi.updateSection('footer', newFooterData)
+    } catch (err) {
+      console.error('Gagal menyimpan Footer ke PostgreSQL:', err)
+    }
   }
 
   // Reset to default
@@ -413,15 +342,12 @@ export function ContentProvider({ children }) {
         footer: content.footer,
         updateHero,
         updateAbout,
-        updateServicesMeta,
         addService,
         updateService,
         deleteService,
-        updateGalleryMeta,
         addGalleryItem,
         updateGalleryItem,
         deleteGalleryItem,
-        updateTestimonialsMeta,
         addTestimonial,
         updateTestimonial,
         deleteTestimonial,
