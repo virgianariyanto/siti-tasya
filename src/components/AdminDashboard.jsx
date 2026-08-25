@@ -1704,7 +1704,7 @@ export default function AdminDashboard({ onNavigate }) {
                   >
                     <option value="Books">Books</option>
                     <option value="Characters">Characters</option>
-                    <option value="Packaging">Packaging</option>
+                    <option value="Printed Art/Painting">Printed Art/Painting</option>
                   </select>
                 </div>
               </div>

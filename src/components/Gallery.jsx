@@ -5,7 +5,7 @@ export default function Gallery() {
   const { gallery } = useContent()
   const [activeCategory, setActiveCategory] = useState('All Stories')
 
-  const categories = gallery?.categories || ['All Stories', 'Characters', 'Books', 'Packaging']
+  const categories = gallery?.categories || ['All Stories', 'Characters', 'Books', 'Printed Art/Painting']
   const galleryItems = gallery?.items || []
 
   const filteredItems =

@@ -54,7 +54,7 @@ const DEFAULT_CONTENT = {
   gallery: {
     sectionTitle: 'Illustration Gallery',
     sectionSubtitle: 'A window into my digital sketchbook—where paper textures meet digital dreams.',
-    categories: ['All Stories', 'Characters', 'Books', 'Packaging'],
+    categories: ['All Stories', 'Characters', 'Books', 'Printed Art/Painting'],
     items: [],
   },
   testimonials: {
