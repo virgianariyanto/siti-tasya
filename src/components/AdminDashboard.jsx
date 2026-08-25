@@ -377,7 +377,7 @@ export default function AdminDashboard({ onNavigate }) {
               <span className="material-symbols-outlined text-lg">visibility</span>
               <span>Lihat Web</span>
             </button>
-            <button
+            {/* <button
               onClick={() => {
                 logout()
                 onNavigate('home')
@@ -386,7 +386,7 @@ export default function AdminDashboard({ onNavigate }) {
             >
               <span className="material-symbols-outlined text-lg">logout</span>
               <span>Keluar</span>
-            </button>
+            </button> */}
           </div>
         </div>
 
