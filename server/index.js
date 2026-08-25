@@ -137,6 +137,32 @@ app.post('/api/auth/change-password', async (req, res) => {
   }
 })
 
+app.post('/api/auth/change-email', async (req, res) => {
+  const { currentPassword, newEmail } = req.body
+  try {
+    const cleanEmail = newEmail?.trim().toLowerCase()
+    if (!cleanEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
+      return res.status(400).json({ success: false, message: 'Format alamat email baru tidak valid.' })
+    }
+
+    const check = await pool.query('SELECT * FROM admin_users WHERE password = $1 LIMIT 1;', [currentPassword])
+    if (check.rows.length === 0) {
+      return res.status(400).json({ success: false, message: 'Kata sandi saat ini tidak cocok untuk otorisasi.' })
+    }
+
+    // Check if email already used by another admin
+    const existing = await pool.query('SELECT id FROM admin_users WHERE LOWER(email) = $1 AND id != $2;', [cleanEmail, check.rows[0].id])
+    if (existing.rows.length > 0) {
+      return res.status(400).json({ success: false, message: 'Alamat email ini sudah digunakan oleh akun lain.' })
+    }
+
+    await pool.query('UPDATE admin_users SET email = $1, updated_at = NOW() WHERE id = $2;', [cleanEmail, check.rows[0].id])
+    res.json({ success: true, message: 'Alamat email admin berhasil diperbarui!', email: cleanEmail })
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message })
+  }
+})
+
 // ==================== CONTENT APIS ====================
 app.get('/api/content', async (req, res) => {
   try {

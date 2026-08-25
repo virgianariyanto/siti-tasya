@@ -95,15 +95,6 @@ export default function Navbar({ onNavigate, currentPage = 'home' }) {
             </div>
           ) : (
             <div className="flex items-center gap-2">
-              <button
-                onClick={() => onNavigate('login')}
-                className="px-4 py-2 rounded-full font-bold text-xs sm:text-sm text-primary hover:bg-primary/10 transition-all flex items-center gap-1.5 cursor-pointer border border-primary/20"
-                title="Masuk ke portal admin"
-              >
-                <span className="material-symbols-outlined text-base">lock</span>
-                <span>Admin</span>
-              </button>
-
               <a
                 href={currentPage === 'home' ? '#contact' : '#'}
                 onClick={() => currentPage !== 'home' && onNavigate && onNavigate('home')}

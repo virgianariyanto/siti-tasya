@@ -47,6 +47,12 @@ export const authApi = {
       method: 'POST',
       body: JSON.stringify({ currentPassword, newPassword }),
     }),
+
+  changeEmail: (currentPassword, newEmail) =>
+    request('/auth/change-email', {
+      method: 'POST',
+      body: JSON.stringify({ currentPassword, newEmail }),
+    }),
 }
 
 // ==================== CONTENT API ====================

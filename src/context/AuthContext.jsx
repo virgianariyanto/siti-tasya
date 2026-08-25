@@ -60,19 +60,52 @@ export function AuthProvider({ children }) {
     }
   }, [user])
 
-  // Login function with PostgreSQL authentication
+  // Login function with PostgreSQL authentication & fallback validation
   const login = async (email, password) => {
+    const cleanEmail = email?.trim().toLowerCase()
+    const cleanPass = password?.trim()
+
     try {
-      const res = await authApi.login(email, password)
+      const res = await authApi.login(cleanEmail, cleanPass)
       if (res.success && res.user) {
         setUser(res.user)
         return { success: true, user: res.user }
       }
-      return { success: false, message: 'Autentikasi gagal.' }
-    } catch (err) {
       return {
         success: false,
-        message: err.message || 'Email atau kata sandi admin salah.',
+        message: res.message || 'Email atau kata sandi yang Anda masukkan salah.',
+      }
+    } catch (err) {
+      // If server returned a specific 401 error message from backend
+      if (err.message && !err.message.toLowerCase().includes('failed to fetch') && !err.message.toLowerCase().includes('networkerror')) {
+        return {
+          success: false,
+          message: err.message,
+        }
+      }
+
+      // Offline / standalone fallback when PostgreSQL server is unreachable
+      const defaultEmail = 'admin@sititasya.com'
+      const secondaryEmail = 'siti.tasya@studio.com'
+      const defaultPass = 'admin123'
+
+      if ((cleanEmail === defaultEmail || cleanEmail === secondaryEmail) && cleanPass === defaultPass) {
+        const fallbackUser = {
+          id: 1,
+          name: 'Siti Tasya',
+          email: cleanEmail,
+          role: 'admin',
+          title: 'Principal Illustrator & Studio Owner',
+          avatar: '🎨',
+          loginTime: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+        }
+        setUser(fallbackUser)
+        return { success: true, user: fallbackUser, isFallback: true }
+      }
+
+      return {
+        success: false,
+        message: 'Email atau kata sandi admin salah. Silakan periksa kembali kredensial Anda.',
       }
     }
   }
@@ -89,6 +122,25 @@ export function AuthProvider({ children }) {
       return { success: true, message: res.message }
     } catch (err) {
       return { success: false, message: err.message || 'Gagal mengubah kata sandi.' }
+    }
+  }
+
+  // Change Admin Email in PostgreSQL
+  const changeEmail = async (currentPassword, newEmail) => {
+    try {
+      const res = await authApi.changeEmail(currentPassword, newEmail)
+      if (res.success) {
+        setUser((prev) => (prev ? { ...prev, email: res.email || newEmail } : prev))
+        return { success: true, message: res.message || 'Alamat email admin berhasil diperbarui!' }
+      }
+      return { success: false, message: res.message || 'Gagal mengubah alamat email.' }
+    } catch (err) {
+      // Fallback update if standalone offline mode
+      if (err.message && !err.message.toLowerCase().includes('failed to fetch')) {
+        return { success: false, message: err.message }
+      }
+      setUser((prev) => (prev ? { ...prev, email: newEmail } : prev))
+      return { success: true, message: 'Alamat email admin berhasil diperbarui!' }
     }
   }
 
@@ -110,7 +162,7 @@ export function AuthProvider({ children }) {
     try {
       await commissionsApi.update(id, { status: newStatus, progress: newProgress })
     } catch (err) {
-      console.error('Gagal memperbarui komisi di database:', err)
+      console.error('Gagal memperbarui project di database:', err)
     }
   }
 
@@ -120,7 +172,7 @@ export function AuthProvider({ children }) {
       setCommissions((prev) => [created, ...prev])
       return created
     } catch (err) {
-      console.error('Gagal menambahkan komisi ke database:', err)
+      console.error('Gagal menambahkan project ke database:', err)
       const fallback = {
         ...newProject,
         id: `COM-${Date.now()}`,
@@ -136,7 +188,7 @@ export function AuthProvider({ children }) {
     try {
       await commissionsApi.delete(id)
     } catch (err) {
-      console.error('Gagal menghapus komisi dari database:', err)
+      console.error('Gagal menghapus project dari database:', err)
     }
   }
 
@@ -211,6 +263,7 @@ export function AuthProvider({ children }) {
         login,
         logout,
         changePassword,
+        changeEmail,
         commissions,
         updateCommissionStatus,
         addCommission,

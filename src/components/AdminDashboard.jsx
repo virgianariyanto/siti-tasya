@@ -13,9 +13,8 @@ export default function AdminDashboard({ onNavigate }) {
     inquiries,
     toggleInquiryStatus,
     deleteInquiry,
-    studioSettings,
-    updateStudioSettings,
     changePassword,
+    changeEmail,
   } = useAuth()
 
   const {
@@ -175,21 +174,69 @@ export default function AdminDashboard({ onNavigate }) {
       deliverables: '',
       notes: '',
     })
-    notify('success', 'Proyek komisi baru berhasil ditambahkan!')
+    notify('success', 'Project baru berhasil ditambahkan!')
   }
 
-  const handlePasswordSubmit = (e) => {
+  const [emailState, setEmailState] = useState({
+    newEmail: '',
+    confirmPassword: '',
+  })
+  const [isUpdatingEmail, setIsUpdatingEmail] = useState(false)
+  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false)
+
+  const handleEmailSubmit = async (e) => {
+    e.preventDefault()
+    const cleanEmail = emailState.newEmail.trim().toLowerCase()
+    if (!cleanEmail) {
+      notify('error', 'Alamat email baru wajib diisi.')
+      return
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(cleanEmail)) {
+      notify('error', 'Format alamat email baru tidak valid (contoh: nama@sititasya.com).')
+      return
+    }
+    if (cleanEmail === user?.email?.toLowerCase()) {
+      notify('warning', 'Alamat email baru tidak boleh sama dengan email aktif saat ini.')
+      return
+    }
+    if (!emailState.confirmPassword) {
+      notify('error', 'Kata sandi saat ini diperlukan untuk otorisasi perubahan email.')
+      return
+    }
+
+    setIsUpdatingEmail(true)
+    const res = await changeEmail(emailState.confirmPassword, cleanEmail)
+    setIsUpdatingEmail(false)
+
+    if (res.success) {
+      notify('success', res.message || 'Alamat email admin berhasil diperbarui!')
+      setEmailState({ newEmail: '', confirmPassword: '' })
+    } else {
+      notify('error', res.message || 'Gagal mengubah alamat email admin.')
+    }
+  }
+
+  const handlePasswordSubmit = async (e) => {
     e.preventDefault()
     if (pwState.newPassword !== pwState.confirmPassword) {
       notify('error', 'Konfirmasi kata sandi baru tidak cocok.')
       return
     }
-    const res = changePassword(pwState.currentPassword, pwState.newPassword)
+    if (pwState.newPassword.length < 6) {
+      notify('error', 'Kata sandi baru minimal 6 karakter.')
+      return
+    }
+
+    setIsUpdatingPassword(true)
+    const res = await changePassword(pwState.currentPassword, pwState.newPassword)
+    setIsUpdatingPassword(false)
+
     if (res.success) {
-      notify('success', res.message)
+      notify('success', res.message || 'Kata sandi admin berhasil diperbarui!')
       setPwState({ currentPassword: '', newPassword: '', confirmPassword: '' })
     } else {
-      notify('error', res.message)
+      notify('error', res.message || 'Gagal mengubah kata sandi.')
     }
   }
 
@@ -317,7 +364,7 @@ export default function AdminDashboard({ onNavigate }) {
                 </span>
               </div>
               <p className="font-body-md text-sm text-on-surface-variant mt-1">
-                Kelola konten website secara dinamis, antrean proyek komisi, dan pesan calon klien.
+                Kelola konten website secara dinamis, antrean project, dan pesan calon klien.
               </p>
             </div>
           </div>
@@ -388,23 +435,15 @@ export default function AdminDashboard({ onNavigate }) {
           </div>
 
           <div className="p-5 rounded-2xl bg-surface-container-lowest border border-primary/15 shadow-sm flex items-center gap-4">
-            <div
-              className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                studioSettings.isOpenForCommissions
-                  ? 'bg-secondary-container text-secondary'
-                  : 'bg-error-container text-error'
-              }`}
-            >
-              <span className="material-symbols-outlined text-2xl">
-                {studioSettings.isOpenForCommissions ? 'lock_open' : 'lock'}
-              </span>
+            <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+              <span className="material-symbols-outlined text-2xl">verified_user</span>
             </div>
             <div>
               <span className="text-xs text-on-surface-variant font-bold uppercase tracking-wider block">
-                Status Komisi
+                Akun Admin Aktif
               </span>
-              <span className="font-display-lg text-lg font-bold text-on-surface">
-                {studioSettings.isOpenForCommissions ? '🟢 Open Slot' : '🔴 Closed'}
+              <span className="font-bold text-sm text-primary font-mono block truncate max-w-[140px]" title={user?.email || 'admin@sititasya.com'}>
+                {user?.email || 'admin@sititasya.com'}
               </span>
             </div>
           </div>
@@ -433,7 +472,7 @@ export default function AdminDashboard({ onNavigate }) {
             }`}
           >
             <span className="material-symbols-outlined text-lg">assignment</span>
-            <span>Kelola Komisi ({commissions.length})</span>
+            <span>Kelola Project ({commissions.length})</span>
           </button>
 
           <button
@@ -610,7 +649,7 @@ export default function AdminDashboard({ onNavigate }) {
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-surface-container-lowest p-6 rounded-3xl border-2 border-primary/15">
                   <div>
                     <h3 className="font-display-lg text-2xl font-bold text-primary">Kelola Layanan Ilustrasi (Services)</h3>
-                    <p className="text-xs text-on-surface-variant">Tambah, edit kartu layanan, ikon Material Symbols, dan harga komisi.</p>
+                    <p className="text-xs text-on-surface-variant">Tambah, edit kartu layanan, ikon Material Symbols, dan harga project.</p>
                   </div>
                   <button
                     type="button"
@@ -1238,7 +1277,7 @@ export default function AdminDashboard({ onNavigate }) {
                       <button
                         onClick={() =>
                           requestConfirm(
-                            'Hapus Proyek Komisi',
+                            'Hapus Project',
                             `Apakah Anda yakin ingin menghapus proyek "${project.projectTitle}"?`,
                             () => {
                               deleteCommission(project.id)
@@ -1420,75 +1459,110 @@ export default function AdminDashboard({ onNavigate }) {
         {activeTab === 'settings' && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             
-            {/* Studio Availability Settings */}
+            {/* Ubah Alamat Email Admin */}
             <div className="sketchbook-frame bg-surface-container-lowest border-2 border-primary/15 rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
               <div>
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary font-bold text-xs mb-2">
+                  <span className="material-symbols-outlined text-sm">mark_email_read</span>
+                  <span>Akun Administrator</span>
+                </div>
                 <h3 className="font-display-lg text-2xl font-bold text-on-surface">
-                  Ketersediaan Komisi Studio
+                  Ubah Alamat Email Admin
                 </h3>
                 <p className="font-body-md text-sm text-on-surface-variant mt-1">
-                  Atur apakah Anda sedang menerima proyek komisi baru dari klien publik.
+                  Perbarui alamat email resmi untuk login dan notifikasi administrasi studio.
                 </p>
               </div>
 
+              {/* Current Active Email Badge */}
               <div className="p-4 rounded-2xl bg-surface-container-low border border-primary/10 flex items-center justify-between">
                 <div>
-                  <h4 className="font-bold text-sm text-on-surface">Terima Pesanan Ilustrasi</h4>
-                  <p className="text-xs text-on-surface-variant">
-                    {studioSettings.isOpenForCommissions
-                      ? 'Status publik: Terbuka untuk komisi baru (Open)'
-                      : 'Status publik: Penuh / Ditutup sementara (Booked Out)'}
+                  <span className="text-xs text-on-surface-variant font-bold uppercase tracking-wider block">
+                    Email Aktif Saat Ini
+                  </span>
+                  <span className="font-bold text-sm text-primary font-mono mt-0.5 block">
+                    {user?.email || 'admin@sititasya.com'}
+                  </span>
+                </div>
+                <span className="px-2.5 py-1 rounded-full bg-secondary-container text-on-secondary-container text-xs font-bold flex items-center gap-1">
+                  <span className="material-symbols-outlined text-xs">verified</span>
+                  <span>Terverifikasi</span>
+                </span>
+              </div>
+
+              <form onSubmit={handleEmailSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-bold text-on-surface uppercase tracking-wider mb-2">
+                    Alamat Email Baru
+                  </label>
+                  <div className="relative">
+                    <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">
+                      mail
+                    </span>
+                    <input
+                      type="email"
+                      required
+                      value={emailState.newEmail}
+                      onChange={(e) => setEmailState((prev) => ({ ...prev, newEmail: e.target.value }))}
+                      placeholder="contoh: nama.baru@sititasya.com"
+                      className="w-full pl-12 pr-4 py-3 bg-surface-container-low border border-outline/30 rounded-2xl text-on-surface text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-on-surface uppercase tracking-wider mb-2">
+                    Konfirmasi Kata Sandi Saat Ini
+                  </label>
+                  <div className="relative">
+                    <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">
+                      lock
+                    </span>
+                    <input
+                      type="password"
+                      required
+                      value={emailState.confirmPassword}
+                      onChange={(e) => setEmailState((prev) => ({ ...prev, confirmPassword: e.target.value }))}
+                      placeholder="Masukkan sandi saat ini untuk konfirmasi"
+                      className="w-full pl-12 pr-4 py-3 bg-surface-container-low border border-outline/30 rounded-2xl text-on-surface text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                    />
+                  </div>
+                  <p className="text-xs text-on-surface-variant mt-1.5 flex items-center gap-1">
+                    <span className="material-symbols-outlined text-sm text-outline">info</span>
+                    <span>Kata sandi diperlukan demi keamanan otorisasi pergantian email.</span>
                   </p>
                 </div>
+
                 <button
-                  type="button"
-                  onClick={() => {
-                    const newState = !studioSettings.isOpenForCommissions
-                    updateStudioSettings({ isOpenForCommissions: newState })
-                    notify('success', `Status komisi diubah menjadi: ${newState ? 'Open' : 'Booked Out'}`)
-                  }}
-                  className={`w-14 h-8 rounded-full p-1 transition-colors cursor-pointer ${
-                    studioSettings.isOpenForCommissions ? 'bg-primary' : 'bg-outline/40'
-                  }`}
+                  type="submit"
+                  disabled={isUpdatingEmail}
+                  className="w-full bg-primary text-on-primary py-3.5 rounded-2xl font-bold storybook-button shadow-md flex items-center justify-center gap-2 hover:bg-primary/95 transition-all cursor-pointer disabled:opacity-60"
                 >
-                  <div
-                    className={`w-6 h-6 rounded-full bg-white transition-transform ${
-                      studioSettings.isOpenForCommissions ? 'translate-x-6' : 'translate-x-0'
-                    }`}
-                  ></div>
+                  {isUpdatingEmail ? (
+                    <>
+                      <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24" fill="none">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      <span>Menyimpan Email...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="material-symbols-outlined text-lg">save</span>
+                      <span>Simpan Perubahan Email</span>
+                    </>
+                  )}
                 </button>
-              </div>
-
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-xs font-bold text-on-surface uppercase tracking-wider mb-2">
-                    Informasi Slot Kuota
-                  </label>
-                  <input
-                    type="text"
-                    value={studioSettings.currentSlot}
-                    onChange={(e) => updateStudioSettings({ currentSlot: e.target.value })}
-                    className="w-full px-4 py-3 bg-surface-container-low border border-outline/30 rounded-2xl text-on-surface text-sm focus:outline-none focus:border-primary"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-on-surface uppercase tracking-wider mb-2">
-                    Catatan Status untuk Calon Klien
-                  </label>
-                  <textarea
-                    rows={3}
-                    value={studioSettings.statusNotice}
-                    onChange={(e) => updateStudioSettings({ statusNotice: e.target.value })}
-                    className="w-full px-4 py-3 bg-surface-container-low border border-outline/30 rounded-2xl text-on-surface text-sm focus:outline-none focus:border-primary"
-                  ></textarea>
-                </div>
-              </div>
+              </form>
             </div>
 
             {/* Change Admin Password */}
             <div className="sketchbook-frame bg-surface-container-lowest border-2 border-primary/15 rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
               <div>
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary font-bold text-xs mb-2">
+                  <span className="material-symbols-outlined text-sm">key</span>
+                  <span>Keamanan Akun</span>
+                </div>
                 <h3 className="font-display-lg text-2xl font-bold text-on-surface">
                   Keamanan & Ubah Sandi Admin
                 </h3>
@@ -1502,50 +1576,78 @@ export default function AdminDashboard({ onNavigate }) {
                   <label className="block text-xs font-bold text-on-surface uppercase tracking-wider mb-2">
                     Kata Sandi Saat Ini
                   </label>
-                  <input
-                    type="password"
-                    required
-                    value={pwState.currentPassword}
-                    onChange={(e) => setPwState((prev) => ({ ...prev, currentPassword: e.target.value }))}
-                    placeholder="Masukkan sandi saat ini"
-                    className="w-full px-4 py-3 bg-surface-container-low border border-outline/30 rounded-2xl text-on-surface text-sm focus:outline-none focus:border-primary"
-                  />
+                  <div className="relative">
+                    <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">
+                      lock
+                    </span>
+                    <input
+                      type="password"
+                      required
+                      value={pwState.currentPassword}
+                      onChange={(e) => setPwState((prev) => ({ ...prev, currentPassword: e.target.value }))}
+                      placeholder="Masukkan sandi saat ini"
+                      className="w-full pl-12 pr-4 py-3 bg-surface-container-low border border-outline/30 rounded-2xl text-on-surface text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                    />
+                  </div>
                 </div>
 
                 <div>
                   <label className="block text-xs font-bold text-on-surface uppercase tracking-wider mb-2">
                     Kata Sandi Baru (Min. 6 Karakter)
                   </label>
-                  <input
-                    type="password"
-                    required
-                    value={pwState.newPassword}
-                    onChange={(e) => setPwState((prev) => ({ ...prev, newPassword: e.target.value }))}
-                    placeholder="Masukkan sandi baru"
-                    className="w-full px-4 py-3 bg-surface-container-low border border-outline/30 rounded-2xl text-on-surface text-sm focus:outline-none focus:border-primary"
-                  />
+                  <div className="relative">
+                    <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">
+                      lock_reset
+                    </span>
+                    <input
+                      type="password"
+                      required
+                      value={pwState.newPassword}
+                      onChange={(e) => setPwState((prev) => ({ ...prev, newPassword: e.target.value }))}
+                      placeholder="Masukkan sandi baru"
+                      className="w-full pl-12 pr-4 py-3 bg-surface-container-low border border-outline/30 rounded-2xl text-on-surface text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                    />
+                  </div>
                 </div>
 
                 <div>
                   <label className="block text-xs font-bold text-on-surface uppercase tracking-wider mb-2">
                     Konfirmasi Kata Sandi Baru
                   </label>
-                  <input
-                    type="password"
-                    required
-                    value={pwState.confirmPassword}
-                    onChange={(e) => setPwState((prev) => ({ ...prev, confirmPassword: e.target.value }))}
-                    placeholder="Ulangi sandi baru"
-                    className="w-full px-4 py-3 bg-surface-container-low border border-outline/30 rounded-2xl text-on-surface text-sm focus:outline-none focus:border-primary"
-                  />
+                  <div className="relative">
+                    <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">
+                      check
+                    </span>
+                    <input
+                      type="password"
+                      required
+                      value={pwState.confirmPassword}
+                      onChange={(e) => setPwState((prev) => ({ ...prev, confirmPassword: e.target.value }))}
+                      placeholder="Ulangi sandi baru"
+                      className="w-full pl-12 pr-4 py-3 bg-surface-container-low border border-outline/30 rounded-2xl text-on-surface text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                    />
+                  </div>
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full bg-primary text-on-primary py-3.5 rounded-2xl font-bold storybook-button shadow-md flex items-center justify-center gap-2 hover:bg-primary/95 transition-all cursor-pointer"
+                  disabled={isUpdatingPassword}
+                  className="w-full bg-primary text-on-primary py-3.5 rounded-2xl font-bold storybook-button shadow-md flex items-center justify-center gap-2 hover:bg-primary/95 transition-all cursor-pointer disabled:opacity-60"
                 >
-                  <span className="material-symbols-outlined text-lg">save</span>
-                  <span>Perbarui Kata Sandi</span>
+                  {isUpdatingPassword ? (
+                    <>
+                      <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24" fill="none">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      <span>Menyimpan Sandi...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="material-symbols-outlined text-lg">save</span>
+                      <span>Perbarui Kata Sandi</span>
+                    </>
+                  )}
                 </button>
               </form>
             </div>
@@ -1900,7 +2002,7 @@ export default function AdminDashboard({ onNavigate }) {
 
             <div className="mb-6">
               <h3 className="font-display-lg text-2xl font-bold text-on-surface">
-                Tambah Proyek Komisi Baru
+                Tambah Project Baru
               </h3>
               <p className="font-body-md text-sm text-on-surface-variant mt-1">
                 Catat pesanan baru dari penerbit atau klien komersial.
