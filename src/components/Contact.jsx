@@ -9,23 +9,21 @@ export default function Contact() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    service: "Children's Book Series",
-    budgetRange: 'Rp 10.000.000 - Rp 20.000.000',
     message: '',
   })
   const [submitted, setSubmitted] = useState(false)
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    if (!formData.name || !formData.email) return
+    if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) return
 
     // Add inquiry to Auth/Admin system
     addInquiry({
-      name: formData.name,
-      email: formData.email,
-      service: formData.service,
-      budgetRange: formData.budgetRange,
-      message: formData.message,
+      name: formData.name.trim(),
+      email: formData.email.trim(),
+      service: 'General Commission & Story Inquiry',
+      budgetRange: 'To be discussed',
+      message: formData.message.trim(),
     })
 
     setSubmitted(true)
@@ -34,8 +32,6 @@ export default function Contact() {
       setFormData({
         name: '',
         email: '',
-        service: "Children's Book Series",
-        budgetRange: 'Rp 10.000.000 - Rp 20.000.000',
         message: '',
       })
     }, 4000)
@@ -104,81 +100,48 @@ export default function Contact() {
                 <span className="material-symbols-outlined text-5xl">auto_awesome</span>
                 <h3 className="font-display-lg text-2xl font-bold">Magic Sent! ✨</h3>
                 <p className="font-body-lg">
-                  Terima kasih sudah menghubungi! Pesan Anda telah terkirim langsung ke inbox studio Siti Tasya.
+                  Thank you for reaching out! Your message has been sent directly to Siti Tasya's studio inbox.
                 </p>
               </div>
             ) : (
               <>
                 <div className="space-y-2">
                   <label className="block font-label-caps text-primary mb-2 tracking-[0.2em]">
-                    NAMA LENGKAP
+                    FULL NAME
                   </label>
                   <input
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full bg-white/80 border-2 border-primary/5 rounded-2xl px-6 py-5 focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all text-lg"
-                    placeholder="Nama Anda atau Penerbit"
+                    className="w-full bg-white/80 border-2 border-primary/5 rounded-2xl px-6 py-5 focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all text-lg font-body-md"
+                    placeholder="Your name or publisher"
                     type="text"
                   />
                 </div>
                 <div className="space-y-2">
                   <label className="block font-label-caps text-primary mb-2 tracking-[0.2em]">
-                    ALAMAT EMAIL
+                    EMAIL ADDRESS
                   </label>
                   <input
                     required
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full bg-white/80 border-2 border-primary/5 rounded-2xl px-6 py-5 focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all text-lg"
-                    placeholder="email@penerbit.com"
+                    className="w-full bg-white/80 border-2 border-primary/5 rounded-2xl px-6 py-5 focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all text-lg font-body-md"
+                    placeholder="your.email@example.com"
                     type="email"
                   />
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block font-label-caps text-primary mb-2 tracking-[0.2em] text-xs font-bold">
-                      LAYANAN ILUSTRASI
-                    </label>
-                    <select
-                      value={formData.service}
-                      onChange={(e) => setFormData({ ...formData, service: e.target.value })}
-                      className="w-full bg-white/80 border-2 border-primary/5 rounded-2xl px-4 py-4 text-base focus:border-primary"
-                    >
-                      <option value="Children's Book Series">Children's Book Series</option>
-                      <option value="Character Design & Sheet">Character Design</option>
-                      <option value="Editorial & Book Cover">Editorial & Book Cover</option>
-                      <option value="Packaging & Mascot">Packaging & Mascot</option>
-                      <option value="Other Project">Lainnya / Diskusi</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block font-label-caps text-primary mb-2 tracking-[0.2em] text-xs font-bold">
-                      ESTIMASI ANGGARAN
-                    </label>
-                    <select
-                      value={formData.budgetRange}
-                      onChange={(e) => setFormData({ ...formData, budgetRange: e.target.value })}
-                      className="w-full bg-white/80 border-2 border-primary/5 rounded-2xl px-4 py-4 text-base focus:border-primary"
-                    >
-                      <option value="< Rp 5.000.000">&lt; Rp 5.000.000</option>
-                      <option value="Rp 5.000.000 - Rp 10.000.000">Rp 5.000.000 - Rp 10.000.000</option>
-                      <option value="Rp 10.000.000 - Rp 20.000.000">Rp 10.000.000 - Rp 20.000.000</option>
-                      <option value="> Rp 20.000.000">&gt; Rp 20.000.000</option>
-                    </select>
-                  </div>
-                </div>
                 <div className="space-y-2">
                   <label className="block font-label-caps text-primary mb-2 tracking-[0.2em]">
-                    CERITAKAN PROYEK ANDA
+                    TELL ME YOUR WISHES
                   </label>
                   <textarea
                     required
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    className="w-full bg-white/80 border-2 border-primary/5 rounded-2xl px-6 py-5 focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all text-lg"
-                    placeholder="Ceritakan tentang cerita, konsep, atau jumlah halaman ilustrasi yang Anda butuhkan..."
-                    rows="4"
+                    className="w-full bg-white/80 border-2 border-primary/5 rounded-2xl px-6 py-5 focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all text-lg font-body-md"
+                    placeholder="Tell me about your story, concept, ideas, or what you wish to create together..."
+                    rows="5"
                   ></textarea>
                 </div>
                 <button

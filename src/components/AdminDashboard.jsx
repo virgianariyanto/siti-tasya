@@ -1401,16 +1401,18 @@ export default function AdminDashboard({ onNavigate }) {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs bg-surface-container-low p-3 rounded-xl mb-3">
-                    <div>
-                      <span className="text-outline font-bold">Layanan yang Diminta:</span>{' '}
-                      <span className="font-bold text-on-surface">{inq.service}</span>
+                  {(inq.service && inq.service !== 'General Commission & Story Inquiry') || (inq.budgetRange && inq.budgetRange !== 'To be discussed') ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs bg-surface-container-low p-3 rounded-xl mb-3">
+                      <div>
+                        <span className="text-outline font-bold">Layanan yang Diminta:</span>{' '}
+                        <span className="font-bold text-on-surface">{inq.service}</span>
+                      </div>
+                      <div>
+                        <span className="text-outline font-bold">Estimasi Anggaran:</span>{' '}
+                        <span className="font-bold text-primary">{inq.budgetRange}</span>
+                      </div>
                     </div>
-                    <div>
-                      <span className="text-outline font-bold">Estimasi Anggaran:</span>{' '}
-                      <span className="font-bold text-primary">{inq.budgetRange}</span>
-                    </div>
-                  </div>
+                  ) : null}
 
                   <p className="font-body-md text-sm text-on-surface-variant leading-relaxed bg-surface-container-lowest p-3 rounded-xl border border-primary/10 mb-4">
                     "{inq.message}"
@@ -1426,13 +1428,6 @@ export default function AdminDashboard({ onNavigate }) {
                       </span>
                       <span>{inq.isRead ? 'Tandai Belum Dibalas' : 'Tandai Sudah Dibalas'}</span>
                     </button>
-                    <a
-                      href={`mailto:${inq.email}?subject=Re: Permintaan Ilustrasi Siti Tasya Studio`}
-                      className="px-4 py-2 rounded-xl text-xs font-bold bg-primary text-on-primary hover:bg-primary/90 transition-all flex items-center gap-1.5"
-                    >
-                      <span className="material-symbols-outlined text-sm">reply</span>
-                      <span>Balas Email</span>
-                    </a>
                     <button
                       onClick={() =>
                         requestConfirm(
