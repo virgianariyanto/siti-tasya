@@ -86,8 +86,54 @@ const DEFAULT_CONTENT = {
   },
 }
 
+const CACHE_KEY = 'site_content_cache'
+
+function getInitialContent() {
+  if (typeof window === 'undefined') return DEFAULT_CONTENT
+  try {
+    const cached = localStorage.getItem(CACHE_KEY)
+    if (cached) {
+      const parsed = JSON.parse(cached)
+      return {
+        ...DEFAULT_CONTENT,
+        ...parsed,
+        hero: { ...DEFAULT_CONTENT.hero, ...(parsed.hero || {}) },
+        about: { ...DEFAULT_CONTENT.about, ...(parsed.about || {}) },
+        contact: { ...DEFAULT_CONTENT.contact, ...(parsed.contact || {}) },
+        footer: { ...DEFAULT_CONTENT.footer, ...(parsed.footer || {}) },
+        services: {
+          ...DEFAULT_CONTENT.services,
+          ...(parsed.services || {}),
+          items: Array.isArray(parsed.services?.items) ? parsed.services.items : DEFAULT_CONTENT.services.items,
+        },
+        gallery: {
+          ...DEFAULT_CONTENT.gallery,
+          ...(parsed.gallery || {}),
+          items: Array.isArray(parsed.gallery?.items) ? parsed.gallery.items : DEFAULT_CONTENT.gallery.items,
+        },
+        testimonials: {
+          ...DEFAULT_CONTENT.testimonials,
+          ...(parsed.testimonials || {}),
+          items: Array.isArray(parsed.testimonials?.items) ? parsed.testimonials.items : DEFAULT_CONTENT.testimonials.items,
+        },
+      }
+    }
+  } catch (e) {
+    console.warn('Gagal membaca cache konten:', e)
+  }
+  return DEFAULT_CONTENT
+}
+
+function saveCache(data) {
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify(data))
+  } catch (e) {
+    // Abaikan jika storage penuh atau private mode
+  }
+}
+
 export function ContentProvider({ children }) {
-  const [content, setContent] = useState(DEFAULT_CONTENT)
+  const [content, setContent] = useState(getInitialContent)
 
   // Fetch all dynamic content from PostgreSQL on mount
   useEffect(() => {
@@ -100,25 +146,29 @@ export function ContentProvider({ children }) {
           testimonialsApi.getAll().catch(() => []),
         ])
 
-        setContent((prev) => ({
-          ...prev,
-          hero: siteData.hero || prev.hero,
-          about: siteData.about || prev.about,
-          contact: siteData.contact || prev.contact,
-          footer: siteData.footer || prev.footer,
-          services: {
-            ...prev.services,
-            items: srvs || [],
-          },
-          gallery: {
-            ...prev.gallery,
-            items: gals || [],
-          },
-          testimonials: {
-            ...prev.testimonials,
-            items: tests || [],
-          },
-        }))
+        setContent((prev) => {
+          const updated = {
+            ...prev,
+            hero: siteData.hero || prev.hero,
+            about: siteData.about || prev.about,
+            contact: siteData.contact || prev.contact,
+            footer: siteData.footer || prev.footer,
+            services: {
+              ...prev.services,
+              items: srvs || [],
+            },
+            gallery: {
+              ...prev.gallery,
+              items: gals || [],
+            },
+            testimonials: {
+              ...prev.testimonials,
+              items: tests || [],
+            },
+          }
+          saveCache(updated)
+          return updated
+        })
       } catch (err) {
         console.error('Gagal mengambil konten dari PostgreSQL:', err)
       }
@@ -129,10 +179,14 @@ export function ContentProvider({ children }) {
 
   // Section updaters
   const updateHero = async (newHeroData) => {
-    setContent((prev) => ({
-      ...prev,
-      hero: { ...prev.hero, ...newHeroData },
-    }))
+    setContent((prev) => {
+      const updated = {
+        ...prev,
+        hero: { ...prev.hero, ...newHeroData },
+      }
+      saveCache(updated)
+      return updated
+    })
     try {
       await contentApi.updateSection('hero', newHeroData)
     } catch (err) {
@@ -141,10 +195,14 @@ export function ContentProvider({ children }) {
   }
 
   const updateAbout = async (newAboutData) => {
-    setContent((prev) => ({
-      ...prev,
-      about: { ...prev.about, ...newAboutData },
-    }))
+    setContent((prev) => {
+      const updated = {
+        ...prev,
+        about: { ...prev.about, ...newAboutData },
+      }
+      saveCache(updated)
+      return updated
+    })
     try {
       await contentApi.updateSection('about', newAboutData)
     } catch (err) {
@@ -301,10 +359,14 @@ export function ContentProvider({ children }) {
 
   // Contact & Footer
   const updateContact = async (newContactData) => {
-    setContent((prev) => ({
-      ...prev,
-      contact: { ...prev.contact, ...newContactData },
-    }))
+    setContent((prev) => {
+      const updated = {
+        ...prev,
+        contact: { ...prev.contact, ...newContactData },
+      }
+      saveCache(updated)
+      return updated
+    })
     try {
       await contentApi.updateSection('contact', newContactData)
     } catch (err) {
@@ -313,10 +375,14 @@ export function ContentProvider({ children }) {
   }
 
   const updateFooter = async (newFooterData) => {
-    setContent((prev) => ({
-      ...prev,
-      footer: { ...prev.footer, ...newFooterData },
-    }))
+    setContent((prev) => {
+      const updated = {
+        ...prev,
+        footer: { ...prev.footer, ...newFooterData },
+      }
+      saveCache(updated)
+      return updated
+    })
     try {
       await contentApi.updateSection('footer', newFooterData)
     } catch (err) {
@@ -326,6 +392,9 @@ export function ContentProvider({ children }) {
 
   // Reset to default
   const resetToDefaultContent = () => {
+    try {
+      localStorage.removeItem(CACHE_KEY)
+    } catch (e) {}
     setContent(DEFAULT_CONTENT)
   }
 

@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useAuth } from '../context/useAuth'
 import { useContent } from '../context/useContent'
 
@@ -60,6 +60,23 @@ export default function AdminDashboard({ onNavigate }) {
   const [aboutForm, setAboutForm] = useState(about)
   const [contactForm, setContactForm] = useState(contact)
   const [footerForm, setFooterForm] = useState(footer)
+
+  // Sync form states with ContentContext whenever data updates/loads from API
+  useEffect(() => {
+    if (hero) setHeroForm(hero)
+  }, [hero])
+
+  useEffect(() => {
+    if (about) setAboutForm(about)
+  }, [about])
+
+  useEffect(() => {
+    if (contact) setContactForm(contact)
+  }, [contact])
+
+  useEffect(() => {
+    if (footer) setFooterForm(footer)
+  }, [footer])
 
   // Modals for CRUD
   const [serviceModal, setServiceModal] = useState({ open: false, isEdit: false, data: null })
