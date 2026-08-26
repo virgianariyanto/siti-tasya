@@ -49,7 +49,7 @@ export default function Gallery() {
 
         <div className="masonry">
           {filteredItems.map((item) => (
-            <div key={item.id} className={`gallery-item group ${item.extraClasses || ''}`}>
+            <div key={item.id} className="gallery-item group">
               <div className="sketchbook-frame group-hover:-translate-y-2 transition-transform duration-500">
                 <img
                   className="w-full rounded-sm object-cover"

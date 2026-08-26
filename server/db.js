@@ -278,7 +278,7 @@ export async function initDatabase() {
           category_key: 'Books',
           img_src: '/images/mushroom_tea_party.png',
           alt: 'A detailed children\'s book illustration showing a tea party under a giant mushroom.',
-          extra_classes: 'lg:mt-12',
+          extra_classes: '',
         },
         {
           id: 'gal-4',
@@ -296,7 +296,7 @@ export async function initDatabase() {
           category_key: 'Printed Art/Painting',
           img_src: '/images/tropical_botanica_poster.png',
           alt: 'A poster art piece featuring a collection of whimsical Indonesian botanicals.',
-          extra_classes: 'lg:-mt-24',
+          extra_classes: '',
         },
       ]
 

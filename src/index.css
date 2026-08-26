@@ -54,26 +54,32 @@ body {
 
 .masonry {
   column-count: 1;
-  column-gap: 2rem;
+  column-gap: 2.5rem;
 }
 @media (min-width: 768px) {
   .masonry {
     column-count: 2;
+    column-gap: 3rem;
   }
 }
 
 .gallery-item {
-  break-inside: avoid;
-  margin-bottom: 2rem;
+  display: inline-block;
+  width: 100%;
+  break-inside: avoid-column;
+  -webkit-column-break-inside: avoid;
+  page-break-inside: avoid;
+  margin-bottom: 3.5rem;
   position: relative;
 }
 
 .sketchbook-frame {
-  padding: 1rem;
+  padding: 1.25rem;
   background: #fff;
-  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.05);
-  border-radius: 4px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.07), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  border-radius: 6px;
   transform: rotate(-1deg);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
 }
 .gallery-item:nth-child(even) .sketchbook-frame {
   transform: rotate(1.5deg);
