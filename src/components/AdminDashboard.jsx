@@ -1,6 +1,26 @@
 import { useState, useRef, useEffect } from 'react'
 import { useAuth } from '../context/useAuth'
 import { useContent } from '../context/useContent'
+import SocialIcon, { getSocialPlatform } from './SocialIcon'
+
+const SOCIAL_PRESETS = [
+  { name: 'Instagram', label: 'Ig', icon: 'instagram', placeholder: 'https://instagram.com/username' },
+  { name: 'LinkedIn', label: 'In', icon: 'linkedin', placeholder: 'https://linkedin.com/in/username' },
+  { name: 'Behance', label: 'Be', icon: 'behance', placeholder: 'https://behance.net/username' },
+  { name: 'X / Twitter', label: 'X', icon: 'x', placeholder: 'https://x.com/username' },
+  { name: 'YouTube', label: 'YT', icon: 'youtube', placeholder: 'https://youtube.com/@channel' },
+  { name: 'TikTok', label: 'TT', icon: 'tiktok', placeholder: 'https://tiktok.com/@username' },
+  { name: 'ArtStation', label: 'Art', icon: 'artstation', placeholder: 'https://artstation.com/artist' },
+  { name: 'Dribbble', label: 'Dr', icon: 'dribbble', placeholder: 'https://dribbble.com/artist' },
+  { name: 'GitHub', label: 'GH', icon: 'github', placeholder: 'https://github.com/username' },
+  { name: 'Discord', label: 'DC', icon: 'discord', placeholder: 'https://discord.gg/invite' },
+  { name: 'Bluesky', label: 'BS', icon: 'bluesky', placeholder: 'https://bsky.app/profile/user.bsky.social' },
+  { name: 'Pinterest', label: 'Pin', icon: 'pinterest', placeholder: 'https://pinterest.com/username' },
+  { name: 'WhatsApp', label: 'WA', icon: 'whatsapp', placeholder: 'https://wa.me/628123456789' },
+  { name: 'Facebook', label: 'FB', icon: 'facebook', placeholder: 'https://facebook.com/username' },
+  { name: 'Threads', label: 'Th', icon: 'threads', placeholder: 'https://threads.net/@username' },
+  { name: 'Email', label: 'Mail', icon: 'mail', placeholder: 'mailto:hello@example.com' },
+]
 
 export default function AdminDashboard({ onNavigate }) {
   const {
@@ -82,6 +102,8 @@ export default function AdminDashboard({ onNavigate }) {
   const [serviceModal, setServiceModal] = useState({ open: false, isEdit: false, data: null })
   const [galleryModal, setGalleryModal] = useState({ open: false, isEdit: false, data: null })
   const [testimonialModal, setTestimonialModal] = useState({ open: false, isEdit: false, data: null })
+  const [socialModal, setSocialModal] = useState({ open: false, isEdit: false, data: null })
+  const [footerLinkModal, setFooterLinkModal] = useState({ open: false, isEdit: false, data: null })
 
   // File input refs
   const galleryFileInputRef = useRef(null)
@@ -275,6 +297,146 @@ export default function AdminDashboard({ onNavigate }) {
     updateContact(contactForm)
     updateFooter(footerForm)
     notify('success', 'Informasi Kontak & Footer berhasil disimpan!')
+  }
+
+  // Social Links Handlers (Contact & Dynamic Shared)
+  const handleOpenAddSocial = () => {
+    setSocialModal({
+      open: true,
+      isEdit: false,
+      data: {
+        name: 'Instagram',
+        label: 'Ig',
+        url: 'https://instagram.com/',
+        icon: 'instagram',
+      },
+    })
+  }
+
+  const handleOpenEditSocial = (item) => {
+    setSocialModal({
+      open: true,
+      isEdit: true,
+      data: { ...item },
+    })
+  }
+
+  const handleSaveSocial = (e) => {
+    e.preventDefault()
+    const { isEdit, data } = socialModal
+    if (!data.name?.trim() || !data.url?.trim()) {
+      notify('error', 'Mohon isi nama platform dan URL media sosial.')
+      return
+    }
+
+    const currentLinks = contactForm.socialLinks || []
+    let updatedLinks
+    if (isEdit) {
+      updatedLinks = currentLinks.map((item) => (item.id === data.id ? { ...data } : item))
+    } else {
+      const newId = `s_${Date.now()}`
+      updatedLinks = [...currentLinks, { ...data, id: newId }]
+    }
+    setContactForm((prev) => ({ ...prev, socialLinks: updatedLinks }))
+    setSocialModal({ open: false, isEdit: false, data: null })
+    notify('info', isEdit ? 'Media sosial diperbarui. Klik "Simpan Kontak & Footer" untuk menyimpan permanen.' : 'Media sosial ditambahkan. Klik "Simpan Kontak & Footer" untuk menyimpan permanen.')
+  }
+
+  const handleDeleteSocial = (id, name) => {
+    requestConfirm('Hapus Media Sosial', `Apakah Anda yakin ingin menghapus tautan "${name || 'ini'}" dari daftar media sosial?`, () => {
+      const updated = (contactForm.socialLinks || []).filter((s) => s.id !== id)
+      setContactForm((prev) => ({ ...prev, socialLinks: updated }))
+      setConfirmModal({ open: false, title: '', message: '', onConfirm: null })
+      notify('info', 'Media sosial dihapus. Klik "Simpan Kontak & Footer" untuk menyimpan permanen.')
+    })
+  }
+
+  const handleMoveSocial = (index, direction) => {
+    const links = [...(contactForm.socialLinks || [])]
+    const targetIndex = direction === 'up' ? index - 1 : index + 1
+    if (targetIndex < 0 || targetIndex >= links.length) return
+    const [moved] = links.splice(index, 1)
+    links.splice(targetIndex, 0, moved)
+    setContactForm((prev) => ({ ...prev, socialLinks: links }))
+  }
+
+  // Footer Links Handlers
+  const handleOpenAddFooterLink = () => {
+    setFooterLinkModal({
+      open: true,
+      isEdit: false,
+      data: {
+        label: 'Instagram',
+        url: 'https://instagram.com/',
+        icon: 'instagram',
+      },
+    })
+  }
+
+  const handleOpenEditFooterLink = (item) => {
+    setFooterLinkModal({
+      open: true,
+      isEdit: true,
+      data: { ...item },
+    })
+  }
+
+  const handleSaveFooterLink = (e) => {
+    e.preventDefault()
+    const { isEdit, data } = footerLinkModal
+    if (!data.label?.trim() || !data.url?.trim()) {
+      notify('error', 'Mohon isi label tautan dan URL.')
+      return
+    }
+
+    const currentLinks = footerForm.footerLinks || []
+    let updatedLinks
+    if (isEdit) {
+      updatedLinks = currentLinks.map((item) => (item.id === data.id ? { ...data } : item))
+    } else {
+      const newId = `f_${Date.now()}`
+      updatedLinks = [...currentLinks, { ...data, id: newId }]
+    }
+    setFooterForm((prev) => ({ ...prev, footerLinks: updatedLinks }))
+    setFooterLinkModal({ open: false, isEdit: false, data: null })
+    notify('info', isEdit ? 'Link footer diperbarui. Klik "Simpan Kontak & Footer" untuk menyimpan permanen.' : 'Link footer ditambahkan. Klik "Simpan Kontak & Footer" untuk menyimpan permanen.')
+  }
+
+  const handleDeleteFooterLink = (id, label) => {
+    requestConfirm('Hapus Link Footer', `Apakah Anda yakin ingin menghapus link "${label || 'ini'}" dari footer?`, () => {
+      const updated = (footerForm.footerLinks || []).filter((f) => f.id !== id)
+      setFooterForm((prev) => ({ ...prev, footerLinks: updated }))
+      setConfirmModal({ open: false, title: '', message: '', onConfirm: null })
+      notify('info', 'Link footer dihapus. Klik "Simpan Kontak & Footer" untuk menyimpan permanen.')
+    })
+  }
+
+  const handleMoveFooterLink = (index, direction) => {
+    const links = [...(footerForm.footerLinks || [])]
+    const targetIndex = direction === 'up' ? index - 1 : index + 1
+    if (targetIndex < 0 || targetIndex >= links.length) return
+    const [moved] = links.splice(index, 1)
+    links.splice(targetIndex, 0, moved)
+    setFooterForm((prev) => ({ ...prev, footerLinks: links }))
+  }
+
+  const handleSyncFooterWithSocial = () => {
+    const derived = (contactForm.socialLinks || []).map((s) => ({
+      id: `f_${s.id || s.name}`,
+      label: s.name || s.label,
+      url: s.url,
+      icon: s.icon,
+    }))
+    if (contactForm.email) {
+      derived.push({
+        id: 'f_email',
+        label: 'Email',
+        url: `mailto:${contactForm.email}`,
+        icon: 'mail',
+      })
+    }
+    setFooterForm((prev) => ({ ...prev, footerLinks: derived }))
+    notify('success', 'Link footer diselaraskan dengan link media sosial & email!')
   }
 
   // Service Save
@@ -1120,80 +1282,337 @@ export default function AdminDashboard({ onNavigate }) {
 
             {/* CMS SUBTAB: CONTACT & FOOTER */}
             {cmsSubTab === 'contact' && (
-              <form onSubmit={handleSaveContact} className="sketchbook-frame bg-surface-container-lowest border-2 border-primary/15 rounded-3xl p-6 sm:p-8 space-y-6 shadow-sm">
-                <div className="flex justify-between items-center border-b border-primary/10 pb-4">
+              <form onSubmit={handleSaveContact} className="sketchbook-frame bg-surface-container-lowest border-2 border-primary/15 rounded-3xl p-6 sm:p-8 space-y-8 shadow-sm">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-primary/10 pb-4">
                   <div>
                     <h3 className="font-display-lg text-2xl font-bold text-primary">Edit Kontak & Footer</h3>
-                    <p className="text-xs text-on-surface-variant">Ubah email kontak studio, lokasi, dan teks footer.</p>
+                    <p className="text-xs text-on-surface-variant">Ubah email kontak studio, lokasi, teks footer, dan kelola seluruh tautan media sosial secara dinamis.</p>
                   </div>
                   <button
                     type="submit"
-                    className="bg-primary text-on-primary px-6 py-2.5 rounded-xl font-bold text-sm storybook-button shadow-md flex items-center gap-1.5 cursor-pointer"
+                    className="bg-primary text-on-primary px-6 py-2.5 rounded-xl font-bold text-sm storybook-button shadow-md flex items-center gap-1.5 cursor-pointer hover:bg-primary/95"
                   >
                     <span className="material-symbols-outlined text-base">save</span>
                     <span>Simpan Kontak & Footer</span>
                   </button>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <div>
-                    <label className="block text-xs font-bold text-on-surface uppercase tracking-wider mb-2">Alamat Email Publik</label>
-                    <input
-                      type="email"
-                      value={contactForm.email}
-                      onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-surface-container-low border border-outline/30 rounded-xl text-sm"
-                    />
+                {/* Section 1: Studio Contact Info */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 text-primary font-bold text-sm uppercase tracking-wider">
+                    <span className="material-symbols-outlined text-lg">info</span>
+                    <span>1. Informasi Kontak Studio</span>
                   </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                      <label className="block text-xs font-bold text-on-surface uppercase tracking-wider mb-2">Alamat Email Publik</label>
+                      <input
+                        type="email"
+                        value={contactForm.email || ''}
+                        onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
+                        className="w-full px-4 py-2.5 bg-surface-container-low border border-outline/30 rounded-xl text-sm"
+                        placeholder="hello@sititasya.com"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-on-surface uppercase tracking-wider mb-2">Lokasi Studio</label>
+                      <input
+                        type="text"
+                        value={contactForm.location || ''}
+                        onChange={(e) => setContactForm({ ...contactForm, location: e.target.value })}
+                        className="w-full px-4 py-2.5 bg-surface-container-low border border-outline/30 rounded-xl text-sm"
+                        placeholder="Bekasi, Indonesia"
+                      />
+                    </div>
+                  </div>
+
                   <div>
-                    <label className="block text-xs font-bold text-on-surface uppercase tracking-wider mb-2">Lokasi Studio</label>
+                    <label className="block text-xs font-bold text-on-surface uppercase tracking-wider mb-2">Judul Bagian Kontak</label>
                     <input
                       type="text"
-                      value={contactForm.location}
-                      onChange={(e) => setContactForm({ ...contactForm, location: e.target.value })}
+                      value={contactForm.sectionTitle || ''}
+                      onChange={(e) => setContactForm({ ...contactForm, sectionTitle: e.target.value })}
                       className="w-full px-4 py-2.5 bg-surface-container-low border border-outline/30 rounded-xl text-sm"
+                      placeholder="Let's create something magical together"
                     />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-on-surface uppercase tracking-wider mb-2">Subjudul / Pengantar Kontak</label>
+                    <textarea
+                      rows={2}
+                      value={contactForm.sectionSubtitle || ''}
+                      onChange={(e) => setContactForm({ ...contactForm, sectionSubtitle: e.target.value })}
+                      className="w-full px-4 py-2.5 bg-surface-container-low border border-outline/30 rounded-xl text-sm"
+                      placeholder="Whether you have a book idea, a brand project, or just want to say hi..."
+                    ></textarea>
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-xs font-bold text-on-surface uppercase tracking-wider mb-2">Judul Bagian Kontak</label>
-                  <input
-                    type="text"
-                    value={contactForm.sectionTitle}
-                    onChange={(e) => setContactForm({ ...contactForm, sectionTitle: e.target.value })}
-                    className="w-full px-4 py-2.5 bg-surface-container-low border border-outline/30 rounded-xl text-sm"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-on-surface uppercase tracking-wider mb-2">Subjudul / Pengantar Kontak</label>
-                  <textarea
-                    rows={2}
-                    value={contactForm.sectionSubtitle}
-                    onChange={(e) => setContactForm({ ...contactForm, sectionSubtitle: e.target.value })}
-                    className="w-full px-4 py-2.5 bg-surface-container-low border border-outline/30 rounded-xl text-sm"
-                  ></textarea>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-4 border-t border-primary/10">
-                  <div>
-                    <label className="block text-xs font-bold text-on-surface uppercase tracking-wider mb-2">Teks Hak Cipta Footer</label>
-                    <input
-                      type="text"
-                      value={footerForm.copyright}
-                      onChange={(e) => setFooterForm({ ...footerForm, copyright: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-surface-container-low border border-outline/30 rounded-xl text-sm"
-                    />
+                {/* Section 2: Dynamic Social Media Links */}
+                <div className="pt-6 border-t border-primary/10 space-y-4">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                    <div>
+                      <div className="flex items-center gap-2 text-primary font-bold text-sm uppercase tracking-wider">
+                        <span className="material-symbols-outlined text-lg">share</span>
+                        <span>2. Tautan Media Sosial (Contact & Footer)</span>
+                      </div>
+                      <p className="text-xs text-on-surface-variant mt-0.5">
+                        Kelola tautan akun media sosial. Tombol interaktif dengan ikon visual akan tampil di bagian Kontak dan Footer.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleOpenAddSocial}
+                      className="bg-secondary text-on-secondary px-4 py-2 rounded-xl font-bold text-xs flex items-center gap-1.5 shadow-sm hover:bg-secondary/90 cursor-pointer"
+                    >
+                      <span className="material-symbols-outlined text-base">add_circle</span>
+                      <span>Tambah Media Sosial</span>
+                    </button>
                   </div>
-                  <div>
-                    <label className="block text-xs font-bold text-on-surface uppercase tracking-wider mb-2">Tagline Footer</label>
-                    <input
-                      type="text"
-                      value={footerForm.craftBadge}
-                      onChange={(e) => setFooterForm({ ...footerForm, craftBadge: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-surface-container-low border border-outline/30 rounded-xl text-sm"
-                    />
+
+                  {(!contactForm.socialLinks || contactForm.socialLinks.length === 0) ? (
+                    <div className="p-8 text-center bg-surface-container-low border-2 border-dashed border-primary/20 rounded-2xl space-y-2">
+                      <span className="material-symbols-outlined text-4xl text-primary/40">public_off</span>
+                      <p className="font-bold text-sm text-on-surface">Belum ada media sosial ditambahkan</p>
+                      <p className="text-xs text-on-surface-variant">Klik tombol "Tambah Media Sosial" di atas untuk menambahkan Instagram, Behance, LinkedIn, dll.</p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {contactForm.socialLinks.map((social, index) => (
+                        <div
+                          key={social.id || social.name || index}
+                          className="bg-surface-container-low border border-primary/15 rounded-2xl p-3.5 flex items-center justify-between gap-3 hover:border-primary/30 transition-all shadow-xs"
+                        >
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="w-11 h-11 bg-white rounded-xl flex items-center justify-center text-primary border border-primary/20 shrink-0 shadow-xs">
+                              <SocialIcon
+                                name={social.name}
+                                url={social.url}
+                                icon={social.icon}
+                                fallbackLabel={social.label}
+                                className="w-5 h-5"
+                              />
+                            </div>
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-2">
+                                <p className="font-bold text-sm text-on-surface truncate">{social.name || 'Media Sosial'}</p>
+                                {social.label && (
+                                  <span className="px-1.5 py-0.5 rounded bg-primary/10 text-primary font-bold text-[10px]">
+                                    {social.label}
+                                  </span>
+                                )}
+                              </div>
+                              <a
+                                href={social.url}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="text-xs text-on-surface-variant hover:text-primary transition-colors truncate block max-w-[200px] sm:max-w-[240px]"
+                                title={social.url}
+                              >
+                                {social.url || '#'}
+                              </a>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-1 shrink-0">
+                            {/* Reorder Buttons */}
+                            <button
+                              type="button"
+                              disabled={index === 0}
+                              onClick={() => handleMoveSocial(index, 'up')}
+                              className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
+                                index === 0
+                                  ? 'text-outline/30 cursor-not-allowed'
+                                  : 'text-on-surface-variant hover:bg-surface-container-high hover:text-primary'
+                              }`}
+                              title="Pindah ke atas"
+                            >
+                              <span className="material-symbols-outlined text-base">arrow_upward</span>
+                            </button>
+                            <button
+                              type="button"
+                              disabled={index === contactForm.socialLinks.length - 1}
+                              onClick={() => handleMoveSocial(index, 'down')}
+                              className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
+                                index === contactForm.socialLinks.length - 1
+                                  ? 'text-outline/30 cursor-not-allowed'
+                                  : 'text-on-surface-variant hover:bg-surface-container-high hover:text-primary'
+                              }`}
+                              title="Pindah ke bawah"
+                            >
+                              <span className="material-symbols-outlined text-base">arrow_downward</span>
+                            </button>
+
+                            {/* Edit Button */}
+                            <button
+                              type="button"
+                              onClick={() => handleOpenEditSocial(social)}
+                              className="p-1.5 text-primary hover:bg-primary/10 rounded-lg transition-colors cursor-pointer"
+                              title="Edit Media Sosial"
+                            >
+                              <span className="material-symbols-outlined text-base">edit</span>
+                            </button>
+
+                            {/* Delete Button */}
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteSocial(social.id, social.name)}
+                              className="p-1.5 text-outline hover:text-error hover:bg-error-container/30 rounded-lg transition-colors cursor-pointer"
+                              title="Hapus Media Sosial"
+                            >
+                              <span className="material-symbols-outlined text-base">delete</span>
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Section 3: Footer Settings & Dynamic Footer Links */}
+                <div className="pt-6 border-t border-primary/10 space-y-6">
+                  <div className="flex items-center gap-2 text-primary font-bold text-sm uppercase tracking-wider">
+                    <span className="material-symbols-outlined text-lg">dock_to_bottom</span>
+                    <span>3. Pengaturan Bagian Footer</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <div>
+                      <label className="block text-xs font-bold text-on-surface uppercase tracking-wider mb-2">Nama Brand Footer</label>
+                      <input
+                        type="text"
+                        value={footerForm.brandName || ''}
+                        onChange={(e) => setFooterForm({ ...footerForm, brandName: e.target.value })}
+                        className="w-full px-4 py-2.5 bg-surface-container-low border border-outline/30 rounded-xl text-sm"
+                        placeholder="Siti Tasya"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-on-surface uppercase tracking-wider mb-2">Teks Hak Cipta Footer</label>
+                      <input
+                        type="text"
+                        value={footerForm.copyright || ''}
+                        onChange={(e) => setFooterForm({ ...footerForm, copyright: e.target.value })}
+                        className="w-full px-4 py-2.5 bg-surface-container-low border border-outline/30 rounded-xl text-sm"
+                        placeholder="© 2024 Siti Tasya. Hand-drawn with love in Bekasi."
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-on-surface uppercase tracking-wider mb-2">Tagline / Craft Badge</label>
+                      <input
+                        type="text"
+                        value={footerForm.craftBadge || ''}
+                        onChange={(e) => setFooterForm({ ...footerForm, craftBadge: e.target.value })}
+                        className="w-full px-4 py-2.5 bg-surface-container-low border border-outline/30 rounded-xl text-sm"
+                        placeholder="Crafted with magic"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Footer Custom Links */}
+                  <div className="bg-surface-container-low/60 p-5 rounded-2xl border border-primary/15 space-y-4">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-sm text-on-surface">Tautan Khusus Footer (Opsional)</span>
+                          <span className="px-2 py-0.5 rounded-full bg-secondary/15 text-secondary text-[10px] font-bold">
+                            {(footerForm.footerLinks || []).length} Tautan
+                          </span>
+                        </div>
+                        <p className="text-xs text-on-surface-variant mt-0.5">
+                          {(!footerForm.footerLinks || footerForm.footerLinks.length === 0)
+                            ? '✨ Saat ini Footer otomatis menggunakan tautan dari Media Sosial + Email di atas.'
+                            : 'Kustomisasi tautan khusus yang tampil di bagian navigasi Footer.'}
+                        </p>
+                      </div>
+
+                      <div className="flex gap-2 flex-wrap">
+                        <button
+                          type="button"
+                          onClick={handleSyncFooterWithSocial}
+                          className="px-3 py-1.5 bg-surface-container-highest border border-primary/20 text-primary hover:bg-primary/10 rounded-xl font-bold text-xs flex items-center gap-1 transition-colors cursor-pointer"
+                          title="Isi link footer dari daftar media sosial"
+                        >
+                          <span className="material-symbols-outlined text-sm">sync</span>
+                          <span>Salin dari Media Sosial</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleOpenAddFooterLink}
+                          className="px-3 py-1.5 bg-primary text-on-primary rounded-xl font-bold text-xs flex items-center gap-1 shadow-sm hover:bg-primary/95 transition-colors cursor-pointer"
+                        >
+                          <span className="material-symbols-outlined text-sm">add</span>
+                          <span>Tambah Link Footer</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {footerForm.footerLinks && footerForm.footerLinks.length > 0 && (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
+                        {footerForm.footerLinks.map((flink, fIndex) => (
+                          <div
+                            key={flink.id || flink.label || fIndex}
+                            className="bg-white border border-primary/15 rounded-xl p-3 flex items-center justify-between gap-3 shadow-2xs"
+                          >
+                            <div className="flex items-center gap-2.5 min-w-0">
+                              <SocialIcon
+                                name={flink.label || flink.name}
+                                url={flink.url}
+                                icon={flink.icon}
+                                className="w-4 h-4 text-primary shrink-0"
+                              />
+                              <div className="min-w-0">
+                                <p className="font-bold text-xs text-on-surface truncate">{flink.label || flink.name}</p>
+                                <p className="text-[11px] text-on-surface-variant truncate max-w-[180px] sm:max-w-[220px]" title={flink.url}>{flink.url}</p>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center gap-1 shrink-0">
+                              <button
+                                type="button"
+                                disabled={fIndex === 0}
+                                onClick={() => handleMoveFooterLink(fIndex, 'up')}
+                                className={`p-1 rounded transition-colors cursor-pointer ${
+                                  fIndex === 0 ? 'text-outline/30 cursor-not-allowed' : 'text-on-surface-variant hover:text-primary'
+                                }`}
+                                title="Pindah ke atas"
+                              >
+                                <span className="material-symbols-outlined text-sm">arrow_upward</span>
+                              </button>
+                              <button
+                                type="button"
+                                disabled={fIndex === footerForm.footerLinks.length - 1}
+                                onClick={() => handleMoveFooterLink(fIndex, 'down')}
+                                className={`p-1 rounded transition-colors cursor-pointer ${
+                                  fIndex === footerForm.footerLinks.length - 1 ? 'text-outline/30 cursor-not-allowed' : 'text-on-surface-variant hover:text-primary'
+                                }`}
+                                title="Pindah ke bawah"
+                              >
+                                <span className="material-symbols-outlined text-sm">arrow_downward</span>
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleOpenEditFooterLink(flink)}
+                                className="p-1 text-primary hover:bg-primary/10 rounded transition-colors cursor-pointer"
+                                title="Edit Link Footer"
+                              >
+                                <span className="material-symbols-outlined text-sm">edit</span>
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteFooterLink(flink.id, flink.label)}
+                                className="p-1 text-outline hover:text-error hover:bg-error-container/30 rounded transition-colors cursor-pointer"
+                                title="Hapus Link Footer"
+                              >
+                                <span className="material-symbols-outlined text-sm">delete</span>
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               </form>
@@ -2147,6 +2566,325 @@ export default function AdminDashboard({ onNavigate }) {
                   className="flex-1 py-3 bg-primary text-on-primary rounded-xl font-bold text-sm storybook-button shadow-md cursor-pointer"
                 >
                   Simpan Proyek
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Add / Edit Social Link Modal */}
+      {socialModal.open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-on-surface/50 backdrop-blur-sm p-4 overflow-y-auto">
+          <div className="bg-surface-container-lowest border-2 border-primary/20 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl relative my-8">
+            <button
+              onClick={() => setSocialModal({ open: false, isEdit: false, data: null })}
+              className="absolute top-4 right-4 text-outline hover:text-primary transition-colors cursor-pointer"
+            >
+              <span className="material-symbols-outlined">close</span>
+            </button>
+
+            <h3 className="font-display-lg text-2xl font-bold text-on-surface mb-1">
+              {socialModal.isEdit ? 'Edit Media Sosial' : 'Tambah Media Sosial'}
+            </h3>
+            <p className="text-xs text-on-surface-variant mb-4">
+              Pilih platform dari preset cepat atau sesuaikan nama, ikon, dan tautan profil.
+            </p>
+
+            <form onSubmit={handleSaveSocial} className="space-y-4 text-left">
+              {/* Platform Preset Chips */}
+              <div>
+                <label className="block text-[11px] font-bold text-primary uppercase tracking-wider mb-2">
+                  Pilih Cepat Platform:
+                </label>
+                <div className="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto p-1 bg-surface-container-low/60 rounded-xl border border-primary/10">
+                  {SOCIAL_PRESETS.map((preset) => {
+                    const isSelected =
+                      (socialModal.data?.icon === preset.icon) ||
+                      (socialModal.data?.name?.toLowerCase() === preset.name.toLowerCase())
+                    return (
+                      <button
+                        key={preset.name}
+                        type="button"
+                        onClick={() =>
+                          setSocialModal({
+                            ...socialModal,
+                            data: {
+                              ...socialModal.data,
+                              name: preset.name,
+                              label: preset.label,
+                              icon: preset.icon,
+                              url:
+                                !socialModal.data?.url || socialModal.data.url === 'https://instagram.com/'
+                                  ? preset.placeholder
+                                  : socialModal.data.url,
+                            },
+                          })
+                        }
+                        className={`px-2.5 py-1 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                          isSelected
+                            ? 'bg-primary text-on-primary shadow-xs'
+                            : 'bg-white text-on-surface-variant hover:bg-surface-container hover:text-primary border border-primary/15'
+                        }`}
+                      >
+                        <SocialIcon
+                          name={preset.name}
+                          icon={preset.icon}
+                          className="w-3.5 h-3.5"
+                        />
+                        <span>{preset.name}</span>
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-on-surface uppercase mb-1">
+                    Nama Platform *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={socialModal.data?.name || ''}
+                    onChange={(e) =>
+                      setSocialModal({
+                        ...socialModal,
+                        data: { ...socialModal.data, name: e.target.value },
+                      })
+                    }
+                    className="w-full px-3.5 py-2.5 bg-surface-container-low border border-outline/30 rounded-xl text-sm"
+                    placeholder="cth. Instagram, Behance, YouTube"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-on-surface uppercase mb-1">
+                    Label Singkat / Badge
+                  </label>
+                  <input
+                    type="text"
+                    value={socialModal.data?.label || ''}
+                    onChange={(e) =>
+                      setSocialModal({
+                        ...socialModal,
+                        data: { ...socialModal.data, label: e.target.value },
+                      })
+                    }
+                    className="w-full px-3.5 py-2.5 bg-surface-container-low border border-outline/30 rounded-xl text-sm"
+                    placeholder="cth. Ig, In, Be, YT"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-on-surface uppercase mb-1">
+                  URL / Tautan Profil *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={socialModal.data?.url || ''}
+                  onChange={(e) =>
+                    setSocialModal({
+                      ...socialModal,
+                      data: { ...socialModal.data, url: e.target.value },
+                    })
+                  }
+                  className="w-full px-3.5 py-2.5 bg-surface-container-low border border-outline/30 rounded-xl text-sm"
+                  placeholder="https://instagram.com/sititasya"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-on-surface uppercase mb-1">
+                  Identifikasi Ikon Platform
+                </label>
+                <select
+                  value={socialModal.data?.icon || 'link'}
+                  onChange={(e) =>
+                    setSocialModal({
+                      ...socialModal,
+                      data: { ...socialModal.data, icon: e.target.value },
+                    })
+                  }
+                  className="w-full px-3.5 py-2.5 bg-surface-container-low border border-outline/30 rounded-xl text-sm"
+                >
+                  <option value="instagram">Instagram</option>
+                  <option value="linkedin">LinkedIn</option>
+                  <option value="behance">Behance</option>
+                  <option value="x">X (Twitter)</option>
+                  <option value="youtube">YouTube</option>
+                  <option value="tiktok">TikTok</option>
+                  <option value="artstation">ArtStation</option>
+                  <option value="dribbble">Dribbble</option>
+                  <option value="github">GitHub</option>
+                  <option value="discord">Discord</option>
+                  <option value="bluesky">Bluesky</option>
+                  <option value="pinterest">Pinterest</option>
+                  <option value="whatsapp">WhatsApp</option>
+                  <option value="facebook">Facebook</option>
+                  <option value="threads">Threads</option>
+                  <option value="mail">Email / Mail</option>
+                  <option value="link">Website / Link Umum</option>
+                </select>
+              </div>
+
+              {/* Live Preview Box */}
+              <div className="bg-surface-container-low p-4 rounded-2xl border border-primary/15 flex items-center justify-between gap-4">
+                <div>
+                  <p className="text-xs font-bold text-on-surface">Preview Tombol Kontak</p>
+                  <p className="text-[11px] text-on-surface-variant">Tampilan visual ikon di website pengunjung</p>
+                </div>
+                <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center hand-drawn-border text-primary font-bold text-xl shadow-md">
+                  <SocialIcon
+                    name={socialModal.data?.name}
+                    url={socialModal.data?.url}
+                    icon={socialModal.data?.icon}
+                    fallbackLabel={socialModal.data?.label}
+                    className="w-7 h-7"
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setSocialModal({ open: false, isEdit: false, data: null })}
+                  className="flex-1 py-2.5 border border-outline/30 rounded-xl font-bold text-sm text-on-surface-variant hover:bg-surface-container-low cursor-pointer"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 py-2.5 bg-primary text-on-primary rounded-xl font-bold text-sm storybook-button shadow-md cursor-pointer"
+                >
+                  {socialModal.isEdit ? 'Perbarui Media Sosial' : 'Tambahkan'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Add / Edit Footer Link Modal */}
+      {footerLinkModal.open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-on-surface/50 backdrop-blur-sm p-4 overflow-y-auto">
+          <div className="bg-surface-container-lowest border-2 border-primary/20 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl relative my-8">
+            <button
+              onClick={() => setFooterLinkModal({ open: false, isEdit: false, data: null })}
+              className="absolute top-4 right-4 text-outline hover:text-primary transition-colors cursor-pointer"
+            >
+              <span className="material-symbols-outlined">close</span>
+            </button>
+
+            <h3 className="font-display-lg text-2xl font-bold text-on-surface mb-1">
+              {footerLinkModal.isEdit ? 'Edit Link Footer' : 'Tambah Link Footer'}
+            </h3>
+            <p className="text-xs text-on-surface-variant mb-4">
+              Atur teks dan URL tautan yang tampil pada navigasi Footer.
+            </p>
+
+            <form onSubmit={handleSaveFooterLink} className="space-y-4 text-left">
+              <div>
+                <label className="block text-xs font-bold text-on-surface uppercase mb-1">
+                  Label Tautan Footer *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={footerLinkModal.data?.label || ''}
+                  onChange={(e) =>
+                    setFooterLinkModal({
+                      ...footerLinkModal,
+                      data: { ...footerLinkModal.data, label: e.target.value },
+                    })
+                  }
+                  className="w-full px-3.5 py-2 bg-surface-container-low border border-outline/30 rounded-xl text-sm"
+                  placeholder="cth. Instagram, Behance, Email, Terms"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-on-surface uppercase mb-1">
+                  URL / Tujuan *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={footerLinkModal.data?.url || ''}
+                  onChange={(e) =>
+                    setFooterLinkModal({
+                      ...footerLinkModal,
+                      data: { ...footerLinkModal.data, url: e.target.value },
+                    })
+                  }
+                  className="w-full px-3.5 py-2 bg-surface-container-low border border-outline/30 rounded-xl text-sm"
+                  placeholder="https://... atau mailto:..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-on-surface uppercase mb-1">
+                  Ikon (Opsional)
+                </label>
+                <select
+                  value={footerLinkModal.data?.icon || 'link'}
+                  onChange={(e) =>
+                    setFooterLinkModal({
+                      ...footerLinkModal,
+                      data: { ...footerLinkModal.data, icon: e.target.value },
+                    })
+                  }
+                  className="w-full px-3.5 py-2 bg-surface-container-low border border-outline/30 rounded-xl text-sm"
+                >
+                  <option value="instagram">Instagram</option>
+                  <option value="linkedin">LinkedIn</option>
+                  <option value="behance">Behance</option>
+                  <option value="x">X (Twitter)</option>
+                  <option value="youtube">YouTube</option>
+                  <option value="tiktok">TikTok</option>
+                  <option value="artstation">ArtStation</option>
+                  <option value="dribbble">Dribbble</option>
+                  <option value="github">GitHub</option>
+                  <option value="discord">Discord</option>
+                  <option value="bluesky">Bluesky</option>
+                  <option value="pinterest">Pinterest</option>
+                  <option value="whatsapp">WhatsApp</option>
+                  <option value="facebook">Facebook</option>
+                  <option value="threads">Threads</option>
+                  <option value="mail">Email / Mail</option>
+                  <option value="link">Website / Link Umum</option>
+                </select>
+              </div>
+
+              {/* Preview */}
+              <div className="bg-surface-container-low p-3 rounded-xl border border-primary/15 flex items-center justify-between">
+                <span className="text-xs font-bold text-on-surface-variant">Preview Link Footer:</span>
+                <div className="flex items-center gap-1.5 text-on-surface-variant font-bold text-sm">
+                  <SocialIcon
+                    name={footerLinkModal.data?.label}
+                    url={footerLinkModal.data?.url}
+                    icon={footerLinkModal.data?.icon}
+                    className="w-4 h-4 text-primary"
+                  />
+                  <span>{footerLinkModal.data?.label || 'Link'}</span>
+                </div>
+              </div>
+
+              <div className="flex gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setFooterLinkModal({ open: false, isEdit: false, data: null })}
+                  className="flex-1 py-2.5 border border-outline/30 rounded-xl font-bold text-sm text-on-surface-variant hover:bg-surface-container-low cursor-pointer"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 py-2.5 bg-primary text-on-primary rounded-xl font-bold text-sm storybook-button shadow-md cursor-pointer"
+                >
+                  {footerLinkModal.isEdit ? 'Perbarui Link' : 'Tambahkan'}
                 </button>
               </div>
             </form>

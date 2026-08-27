@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useContent } from '../context/useContent'
 import { useAuth } from '../context/useAuth'
+import SocialIcon from './SocialIcon'
 
 export default function Contact() {
   const { contact } = useContent()
@@ -73,17 +74,26 @@ export default function Contact() {
             </div>
           </div>
           {contact?.socialLinks && contact.socialLinks.length > 0 && (
-            <div className="flex gap-6 pt-10">
+            <div className="flex flex-wrap gap-4 md:gap-6 pt-10">
               {contact.socialLinks.map((social) => (
                 <a
-                  key={social.id || social.name}
-                  className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center hand-drawn-border hover:bg-primary hover:text-white transition-all hover:-translate-y-2 shadow-lg font-bold text-xl"
-                  href={social.url}
-                  target="_blank"
+                  key={social.id || social.name || social.url}
+                  className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center hand-drawn-border hover:bg-primary hover:text-white transition-all hover:-translate-y-2 shadow-lg font-bold text-xl text-primary group relative cursor-pointer"
+                  href={social.url || '#'}
+                  target={social.url?.startsWith('http') ? '_blank' : '_self'}
                   rel="noreferrer"
-                  title={social.name}
+                  title={social.name || social.label}
                 >
-                  <span>{social.label || social.name.slice(0, 2)}</span>
+                  <SocialIcon
+                    name={social.name}
+                    url={social.url}
+                    icon={social.icon}
+                    fallbackLabel={social.label}
+                    className="w-7 h-7 transition-transform group-hover:scale-110"
+                  />
+                  {social.label && (
+                    <span className="sr-only">{social.label}</span>
+                  )}
                 </a>
               ))}
             </div>

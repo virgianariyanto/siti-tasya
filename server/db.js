@@ -127,9 +127,9 @@ export async function initDatabase() {
             email: 'hello@sititasya.com',
             location: 'Bekasi, Indonesia',
             socialLinks: [
-              { id: 's1', name: 'LinkedIn', label: 'In', url: 'https://linkedin.com' },
-              { id: 's2', name: 'Instagram', label: 'Ig', url: 'https://instagram.com' },
-              { id: 's3', name: 'Behance', label: 'Be', url: 'https://behance.net' },
+              { id: 's1', name: 'LinkedIn', label: 'In', url: 'https://linkedin.com', icon: 'linkedin' },
+              { id: 's2', name: 'Instagram', label: 'Ig', url: 'https://instagram.com', icon: 'instagram' },
+              { id: 's3', name: 'Behance', label: 'Be', url: 'https://behance.net', icon: 'behance' },
             ],
           }),
         ]
@@ -146,10 +146,10 @@ export async function initDatabase() {
             copyright: '© 2024 Siti Tasya. Hand-drawn with love in Bekasi.',
             craftBadge: 'Crafted with magic',
             footerLinks: [
-              { id: 'f1', label: 'Instagram', url: '#' },
-              { id: 'f2', label: 'Twitter', url: '#' },
-              { id: 'f3', label: 'Behance', url: '#' },
-              { id: 'f4', label: 'Email', url: 'mailto:hello@sititasya.com' },
+              { id: 'f1', label: 'Instagram', url: 'https://instagram.com', icon: 'instagram' },
+              { id: 'f2', label: 'Twitter', url: 'https://twitter.com', icon: 'x' },
+              { id: 'f3', label: 'Behance', url: 'https://behance.net', icon: 'behance' },
+              { id: 'f4', label: 'Email', url: 'mailto:hello@sititasya.com', icon: 'mail' },
             ],
           }),
         ]
