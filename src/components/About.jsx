@@ -14,7 +14,7 @@ export default function About() {
               <div className="hand-drawn-border p-6 bg-white rotate-2 shadow-xl hover:rotate-0 transition-transform duration-500">
                 <img
                   className="w-full aspect-square object-cover rounded-lg"
-                  src={about.avatarUrl}
+                  src={about.avatarUrl || '/images/about.jpg'}
                   alt={about.avatarAlt || 'Artist Avatar'}
                 />
               </div>
