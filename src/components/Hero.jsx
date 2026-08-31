@@ -72,7 +72,7 @@ export default function Hero() {
             <div className="w-full h-full sketchbook-frame relative overflow-hidden shadow-2xl scale-105 transition-transform duration-700 hover:scale-[1.07]">
               <img
                 className="w-full h-full object-cover rounded-sm transition-transform duration-1000 hover:scale-105"
-                src={hero.imageUrl || '/images/hero_illustration.png'}
+                src={hero.imageUrl || '/images/hero.JPG'}
                 alt={hero.imageAlt || 'Hero Illustration'}
               />
             </div>
