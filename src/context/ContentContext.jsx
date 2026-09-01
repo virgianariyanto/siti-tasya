@@ -24,8 +24,8 @@ const DEFAULT_CONTENT = {
     stat1Label: 'Books Illustrated',
     stat2Value: '120+',
     stat2Label: 'Character Designs',
-    imageUrl: '/images/hero_illustration.png',
-    imageAlt: 'Whimsical Hero Illustration',
+    imageUrl: '/images/hero.jpg',
+    imageAlt: 'Hero Illustration',
   },
   about: {
     headlinePart1: 'A bit',
@@ -36,7 +36,7 @@ const DEFAULT_CONTENT = {
       "Hello! I'm Siti, a visual storyteller specialized in children's book illustration and character design. Living in the vibrant city of Bekasi, I draw inspiration from both urban hustle and the quiet moments of imagination.",
     paragraph2:
       'My work is characterized by organic textures, warm palettes, and a sense of wonder. I believe every character has a secret story waiting to be told through a single brushstroke.',
-    avatarUrl: '/images/artist_avatar.png',
+    avatarUrl: '/images/about.jpg',
     avatarAlt: 'Siti Tasya Avatar',
     toolboxLabel: 'MY TOOLBOX:',
     toolboxIcons: [
