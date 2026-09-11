@@ -12,7 +12,7 @@ export default function Hero() {
     setImgLoaded(false)
   }
 
-  const showSkeleton = !imgLoaded
+  const showSkeleton = !imgLoaded || !hero?.imageUrl
 
   return (
     <header className="relative pt-40 pb-20 md:pt-56 md:pb-36 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">

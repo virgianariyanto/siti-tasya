@@ -12,7 +12,7 @@ export default function About() {
     setAvatarLoaded(false)
   }
 
-  const showSkeleton = !avatarLoaded
+  const showSkeleton = !avatarLoaded || !about?.avatarUrl
 
   return (
     <section className="py-32 relative overflow-hidden" id="about">
