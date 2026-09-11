@@ -104,6 +104,7 @@ export default function AdminDashboard({ onNavigate }) {
   const [testimonialModal, setTestimonialModal] = useState({ open: false, isEdit: false, data: null })
   const [socialModal, setSocialModal] = useState({ open: false, isEdit: false, data: null })
   const [footerLinkModal, setFooterLinkModal] = useState({ open: false, isEdit: false, data: null })
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   // File input refs
   const galleryFileInputRef = useRef(null)
@@ -149,7 +150,7 @@ export default function AdminDashboard({ onNavigate }) {
     })
   }
 
-  // Handle File Upload to Base64
+  // Handle File Upload with Automatic Client-Side Web Compression
   const handleFileUpload = (file, onSuccess) => {
     if (!file) return
     if (!file.type.startsWith('image/')) {
@@ -157,10 +158,52 @@ export default function AdminDashboard({ onNavigate }) {
       return
     }
 
+    if (file.type === 'image/svg+xml') {
+      const reader = new FileReader()
+      reader.onload = (event) => {
+        onSuccess(event.target.result)
+        notify('success', `Gambar "${file.name}" berhasil diunggah!`)
+      }
+      reader.readAsDataURL(file)
+      return
+    }
+
     const reader = new FileReader()
     reader.onload = (event) => {
-      onSuccess(event.target.result)
-      notify('success', `Gambar "${file.name}" berhasil diunggah!`)
+      const img = new Image()
+      img.onload = () => {
+        const MAX_WIDTH = 1280
+        const MAX_HEIGHT = 1280
+        let width = img.width
+        let height = img.height
+
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height = Math.round((height * MAX_WIDTH) / width)
+            width = MAX_WIDTH
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width = Math.round((width * MAX_HEIGHT) / height)
+            height = MAX_HEIGHT
+          }
+        }
+
+        const canvas = document.createElement('canvas')
+        canvas.width = width
+        canvas.height = height
+        const ctx = canvas.getContext('2d')
+        ctx.drawImage(img, 0, 0, width, height)
+
+        const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.85)
+        onSuccess(compressedDataUrl)
+        notify('success', `Gambar "${file.name}" berhasil diunggah & dioptimalkan!`)
+      }
+      img.onerror = () => {
+        onSuccess(event.target.result)
+        notify('success', `Gambar "${file.name}" berhasil diunggah!`)
+      }
+      img.src = event.target.result
     }
     reader.readAsDataURL(file)
   }
@@ -440,23 +483,30 @@ export default function AdminDashboard({ onNavigate }) {
   }
 
   // Service Save
-  const handleServiceSubmit = (e) => {
+  const handleServiceSubmit = async (e) => {
     e.preventDefault()
     const { isEdit, data } = serviceModal
     if (!data.title) return
 
-    if (isEdit) {
-      updateService(data.id, data)
-      notify('success', `Layanan "${data.title}" berhasil diperbarui!`)
-    } else {
-      addService(data)
-      notify('success', `Layanan baru "${data.title}" berhasil ditambahkan!`)
+    setIsSubmitting(true)
+    try {
+      if (isEdit) {
+        await updateService(data.id, data)
+        notify('success', `Layanan "${data.title}" berhasil diperbarui!`)
+      } else {
+        await addService(data)
+        notify('success', `Layanan baru "${data.title}" berhasil ditambahkan!`)
+      }
+      setServiceModal({ open: false, isEdit: false, data: null })
+    } catch (err) {
+      notify('error', `Gagal menyimpan layanan: ${err.message || 'Terjadi kesalahan'}`)
+    } finally {
+      setIsSubmitting(false)
     }
-    setServiceModal({ open: false, isEdit: false, data: null })
   }
 
   // Gallery Save
-  const handleGallerySubmit = (e) => {
+  const handleGallerySubmit = async (e) => {
     e.preventDefault()
     const { isEdit, data } = galleryModal
     if (!data.title) {
@@ -468,30 +518,44 @@ export default function AdminDashboard({ onNavigate }) {
       return
     }
 
-    if (isEdit) {
-      updateGalleryItem(data.id, data)
-      notify('success', `Karya "${data.title}" berhasil diperbarui!`)
-    } else {
-      addGalleryItem(data)
-      notify('success', `Karya baru "${data.title}" berhasil ditambahkan ke galeri!`)
+    setIsSubmitting(true)
+    try {
+      if (isEdit) {
+        await updateGalleryItem(data.id, data)
+        notify('success', `Karya "${data.title}" berhasil diperbarui!`)
+      } else {
+        await addGalleryItem(data)
+        notify('success', `Karya baru "${data.title}" berhasil ditambahkan ke galeri!`)
+      }
+      setGalleryModal({ open: false, isEdit: false, data: null })
+    } catch (err) {
+      notify('error', `Gagal menyimpan karya: ${err.message || 'Terjadi kesalahan'}`)
+    } finally {
+      setIsSubmitting(false)
     }
-    setGalleryModal({ open: false, isEdit: false, data: null })
   }
 
   // Testimonial Save
-  const handleTestimonialSubmit = (e) => {
+  const handleTestimonialSubmit = async (e) => {
     e.preventDefault()
     const { isEdit, data } = testimonialModal
     if (!data.author || !data.quote) return
 
-    if (isEdit) {
-      updateTestimonial(data.id, data)
-      notify('success', `Testimoni dari "${data.author}" berhasil diperbarui!`)
-    } else {
-      addTestimonial(data)
-      notify('success', `Testimoni baru dari "${data.author}" berhasil ditambahkan!`)
+    setIsSubmitting(true)
+    try {
+      if (isEdit) {
+        await updateTestimonial(data.id, data)
+        notify('success', `Testimoni dari "${data.author}" berhasil diperbarui!`)
+      } else {
+        await addTestimonial(data)
+        notify('success', `Testimoni baru dari "${data.author}" berhasil ditambahkan!`)
+      }
+      setTestimonialModal({ open: false, isEdit: false, data: null })
+    } catch (err) {
+      notify('error', `Gagal menyimpan testimoni: ${err.message || 'Terjadi kesalahan'}`)
+    } finally {
+      setIsSubmitting(false)
     }
-    setTestimonialModal({ open: false, isEdit: false, data: null })
   }
 
   const filteredCommissions = commissions.filter((c) => {
@@ -2254,9 +2318,17 @@ export default function AdminDashboard({ onNavigate }) {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-2.5 bg-primary text-on-primary rounded-xl font-bold text-sm storybook-button shadow-md cursor-pointer"
+                  disabled={isSubmitting}
+                  className="flex-1 py-2.5 bg-primary text-on-primary rounded-xl font-bold text-sm storybook-button shadow-md cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
-                  Simpan Karya
+                  {isSubmitting ? (
+                    <>
+                      <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                      <span>Menyimpan...</span>
+                    </>
+                  ) : (
+                    <span>Simpan Karya</span>
+                  )}
                 </button>
               </div>
             </form>

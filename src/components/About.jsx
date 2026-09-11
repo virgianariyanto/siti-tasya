@@ -1,7 +1,18 @@
+import { useState } from 'react'
 import { useContent } from '../context/useContent'
 
 export default function About() {
   const { about } = useContent()
+  const [avatarLoaded, setAvatarLoaded] = useState(false)
+  const [currentSrc, setCurrentSrc] = useState(about?.avatarUrl)
+
+  // Only reset avatarLoaded if the URL actually changes from the previous one
+  if (about?.avatarUrl && about.avatarUrl !== currentSrc) {
+    setCurrentSrc(about.avatarUrl)
+    setAvatarLoaded(false)
+  }
+
+  const showSkeleton = !avatarLoaded
 
   return (
     <section className="py-32 relative overflow-hidden" id="about">
@@ -12,11 +23,36 @@ export default function About() {
           <div className="lg:col-span-5 order-2 lg:order-1">
             <div className="relative mx-auto lg:mx-0 max-w-sm">
               <div className="hand-drawn-border p-6 bg-white rotate-2 shadow-xl hover:rotate-0 transition-transform duration-500">
-                <img
-                  className="w-full aspect-square object-cover rounded-lg"
-                  src={about.avatarUrl || '/images/about.jpg'}
-                  alt={about.avatarAlt || 'Artist Avatar'}
-                />
+                <div className="w-full aspect-square relative rounded-lg overflow-hidden bg-surface-container-high/30">
+                  {showSkeleton && (
+                    <div className="absolute inset-0 z-10 skeleton-shimmer flex flex-col items-center justify-center p-6 text-center rounded-lg pointer-events-none transition-opacity duration-300">
+                      <div className="w-14 h-14 rounded-full bg-secondary/15 flex items-center justify-center text-secondary mb-2 animate-pulse">
+                        <span className="material-symbols-outlined text-3xl">palette</span>
+                      </div>
+                      <div className="h-3 w-24 bg-primary/15 rounded-full mb-1.5 animate-pulse"></div>
+                      <div className="h-2 w-16 bg-primary/10 rounded-full animate-pulse"></div>
+                    </div>
+                  )}
+
+                  {about?.avatarUrl && (
+                    <img
+                      ref={(el) => {
+                        if (el && el.complete && el.naturalWidth > 0 && !avatarLoaded) {
+                          setAvatarLoaded(true)
+                        }
+                      }}
+                      className={`w-full aspect-square object-cover rounded-lg transition-all duration-500 ${
+                        avatarLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+                      }`}
+                      src={about.avatarUrl}
+                      alt={about.avatarAlt || 'Artist Avatar'}
+                      loading="eager"
+                      decoding="async"
+                      onLoad={() => setAvatarLoaded(true)}
+                      onError={() => setAvatarLoaded(true)}
+                    />
+                  )}
+                </div>
               </div>
               <div className="absolute -bottom-10 -left-10 scribble-accent">
                 <span className="material-symbols-outlined text-8xl text-primary">ink_pen</span>

@@ -134,36 +134,37 @@ function saveCache(data) {
 
 export function ContentProvider({ children }) {
   const [content, setContent] = useState(getInitialContent)
+  const [isLoading, setIsLoading] = useState(true)
 
   // Fetch all dynamic content from PostgreSQL on mount
   useEffect(() => {
     async function loadContent() {
       try {
         const [siteData, srvs, gals, tests] = await Promise.all([
-          contentApi.getAll().catch(() => ({})),
-          servicesApi.getAll().catch(() => []),
-          galleryApi.getAll().catch(() => []),
-          testimonialsApi.getAll().catch(() => []),
+          contentApi.getAll().catch(() => null),
+          servicesApi.getAll().catch(() => null),
+          galleryApi.getAll().catch(() => null),
+          testimonialsApi.getAll().catch(() => null),
         ])
 
         setContent((prev) => {
           const updated = {
             ...prev,
-            hero: siteData.hero || prev.hero,
-            about: siteData.about || prev.about,
-            contact: siteData.contact || prev.contact,
-            footer: siteData.footer || prev.footer,
+            hero: (siteData && siteData.hero) ? siteData.hero : prev.hero,
+            about: (siteData && siteData.about) ? siteData.about : prev.about,
+            contact: (siteData && siteData.contact) ? siteData.contact : prev.contact,
+            footer: (siteData && siteData.footer) ? siteData.footer : prev.footer,
             services: {
               ...prev.services,
-              items: srvs || [],
+              items: Array.isArray(srvs) && srvs.length > 0 ? srvs : prev.services.items,
             },
             gallery: {
               ...prev.gallery,
-              items: gals || [],
+              items: Array.isArray(gals) && gals.length > 0 ? gals : prev.gallery.items,
             },
             testimonials: {
               ...prev.testimonials,
-              items: tests || [],
+              items: Array.isArray(tests) && tests.length > 0 ? tests : prev.testimonials.items,
             },
           }
           saveCache(updated)
@@ -171,6 +172,8 @@ export function ContentProvider({ children }) {
         })
       } catch (err) {
         console.error('Gagal mengambil konten dari PostgreSQL:', err)
+      } finally {
+        setIsLoading(false)
       }
     }
 
@@ -212,148 +215,247 @@ export function ContentProvider({ children }) {
 
   // Services CRUD
   const addService = async (newService) => {
-    try {
-      const created = await servicesApi.create(newService)
-      setContent((prev) => ({
+    const tempId = newService.id || `srv-${Date.now()}`
+    const itemWithId = { ...newService, id: tempId }
+
+    setContent((prev) => {
+      const updated = {
         ...prev,
         services: {
           ...prev.services,
-          items: [...prev.services.items, created],
+          items: [...prev.services.items, itemWithId],
         },
-      }))
-      return created
+      }
+      saveCache(updated)
+      return updated
+    })
+
+    try {
+      const created = await servicesApi.create(newService)
+      if (created && created.id) {
+        setContent((prev) => {
+          const updated = {
+            ...prev,
+            services: {
+              ...prev.services,
+              items: prev.services.items.map((item) =>
+                item.id === tempId ? { ...item, ...created } : item
+              ),
+            },
+          }
+          saveCache(updated)
+          return updated
+        })
+        return created
+      }
+      return itemWithId
     } catch (err) {
-      console.error('Gagal menambahkan layanan ke PostgreSQL:', err)
+      console.warn('Layanan disimpan di cache lokal (PostgreSQL API tidak merespons):', err)
+      return itemWithId
     }
   }
 
   const updateService = async (id, updatedService) => {
-    setContent((prev) => ({
-      ...prev,
-      services: {
-        ...prev.services,
-        items: prev.services.items.map((item) =>
-          String(item.id) === String(id) ? { ...item, ...updatedService } : item
-        ),
-      },
-    }))
+    setContent((prev) => {
+      const updated = {
+        ...prev,
+        services: {
+          ...prev.services,
+          items: prev.services.items.map((item) =>
+            String(item.id) === String(id) ? { ...item, ...updatedService } : item
+          ),
+        },
+      }
+      saveCache(updated)
+      return updated
+    })
     try {
       await servicesApi.update(id, updatedService)
     } catch (err) {
-      console.error('Gagal memperbarui layanan di PostgreSQL:', err)
+      console.warn('Pembaruan layanan disimpan di cache lokal (PostgreSQL API tidak merespons):', err)
     }
   }
 
   const deleteService = async (id) => {
-    setContent((prev) => ({
-      ...prev,
-      services: {
-        ...prev.services,
-        items: prev.services.items.filter((item) => String(item.id) !== String(id)),
-      },
-    }))
+    setContent((prev) => {
+      const updated = {
+        ...prev,
+        services: {
+          ...prev.services,
+          items: prev.services.items.filter((item) => String(item.id) !== String(id)),
+        },
+      }
+      saveCache(updated)
+      return updated
+    })
     try {
       await servicesApi.delete(id)
     } catch (err) {
-      console.error('Gagal menghapus layanan dari PostgreSQL:', err)
+      console.warn('Penghapusan layanan disimpan di cache lokal (PostgreSQL API tidak merespons):', err)
     }
   }
 
   // Gallery CRUD
   const addGalleryItem = async (newItem) => {
-    try {
-      const created = await galleryApi.create(newItem)
-      setContent((prev) => ({
+    const tempId = newItem.id || `gal-${Date.now()}`
+    const itemWithId = { ...newItem, id: tempId }
+
+    setContent((prev) => {
+      const updated = {
         ...prev,
         gallery: {
           ...prev.gallery,
-          items: [created, ...prev.gallery.items],
+          items: [itemWithId, ...prev.gallery.items],
         },
-      }))
-      return created
+      }
+      saveCache(updated)
+      return updated
+    })
+
+    try {
+      const created = await galleryApi.create(newItem)
+      if (created && created.id) {
+        setContent((prev) => {
+          const updated = {
+            ...prev,
+            gallery: {
+              ...prev.gallery,
+              items: prev.gallery.items.map((item) =>
+                item.id === tempId ? { ...item, ...created } : item
+              ),
+            },
+          }
+          saveCache(updated)
+          return updated
+        })
+        return created
+      }
+      return itemWithId
     } catch (err) {
-      console.error('Gagal menambahkan karya ke PostgreSQL:', err)
+      console.warn('Karya disimpan di cache lokal (PostgreSQL API tidak merespons):', err)
+      return itemWithId
     }
   }
 
   const updateGalleryItem = async (id, updatedItem) => {
-    setContent((prev) => ({
-      ...prev,
-      gallery: {
-        ...prev.gallery,
-        items: prev.gallery.items.map((item) =>
-          String(item.id) === String(id) ? { ...item, ...updatedItem } : item
-        ),
-      },
-    }))
+    setContent((prev) => {
+      const updated = {
+        ...prev,
+        gallery: {
+          ...prev.gallery,
+          items: prev.gallery.items.map((item) =>
+            String(item.id) === String(id) ? { ...item, ...updatedItem } : item
+          ),
+        },
+      }
+      saveCache(updated)
+      return updated
+    })
     try {
       await galleryApi.update(id, updatedItem)
     } catch (err) {
-      console.error('Gagal memperbarui karya di PostgreSQL:', err)
+      console.warn('Pembaruan karya disimpan di cache lokal (PostgreSQL API tidak merespons):', err)
     }
   }
 
   const deleteGalleryItem = async (id) => {
-    setContent((prev) => ({
-      ...prev,
-      gallery: {
-        ...prev.gallery,
-        items: prev.gallery.items.filter((item) => String(item.id) !== String(id)),
-      },
-    }))
+    setContent((prev) => {
+      const updated = {
+        ...prev,
+        gallery: {
+          ...prev.gallery,
+          items: prev.gallery.items.filter((item) => String(item.id) !== String(id)),
+        },
+      }
+      saveCache(updated)
+      return updated
+    })
     try {
       await galleryApi.delete(id)
     } catch (err) {
-      console.error('Gagal menghapus karya dari PostgreSQL:', err)
+      console.warn('Penghapusan karya disimpan di cache lokal (PostgreSQL API tidak merespons):', err)
     }
   }
 
   // Testimonials CRUD
   const addTestimonial = async (newItem) => {
-    try {
-      const created = await testimonialsApi.create(newItem)
-      setContent((prev) => ({
+    const tempId = newItem.id || `test-${Date.now()}`
+    const itemWithId = { ...newItem, id: tempId }
+
+    setContent((prev) => {
+      const updated = {
         ...prev,
         testimonials: {
           ...prev.testimonials,
-          items: [...prev.testimonials.items, created],
+          items: [...prev.testimonials.items, itemWithId],
         },
-      }))
-      return created
+      }
+      saveCache(updated)
+      return updated
+    })
+
+    try {
+      const created = await testimonialsApi.create(newItem)
+      if (created && created.id) {
+        setContent((prev) => {
+          const updated = {
+            ...prev,
+            testimonials: {
+              ...prev.testimonials,
+              items: prev.testimonials.items.map((item) =>
+                item.id === tempId ? { ...item, ...created } : item
+              ),
+            },
+          }
+          saveCache(updated)
+          return updated
+        })
+        return created
+      }
+      return itemWithId
     } catch (err) {
-      console.error('Gagal menambahkan testimoni ke PostgreSQL:', err)
+      console.warn('Testimoni disimpan di cache lokal (PostgreSQL API tidak merespons):', err)
+      return itemWithId
     }
   }
 
   const updateTestimonial = async (id, updatedItem) => {
-    setContent((prev) => ({
-      ...prev,
-      testimonials: {
-        ...prev.testimonials,
-        items: prev.testimonials.items.map((item) =>
-          String(item.id) === String(id) ? { ...item, ...updatedItem } : item
-        ),
-      },
-    }))
+    setContent((prev) => {
+      const updated = {
+        ...prev,
+        testimonials: {
+          ...prev.testimonials,
+          items: prev.testimonials.items.map((item) =>
+            String(item.id) === String(id) ? { ...item, ...updatedItem } : item
+          ),
+        },
+      }
+      saveCache(updated)
+      return updated
+    })
     try {
       await testimonialsApi.update(id, updatedItem)
     } catch (err) {
-      console.error('Gagal memperbarui testimoni di PostgreSQL:', err)
+      console.warn('Pembaruan testimoni disimpan di cache lokal (PostgreSQL API tidak merespons):', err)
     }
   }
 
   const deleteTestimonial = async (id) => {
-    setContent((prev) => ({
-      ...prev,
-      testimonials: {
-        ...prev.testimonials,
-        items: prev.testimonials.items.filter((item) => String(item.id) !== String(id)),
-      },
-    }))
+    setContent((prev) => {
+      const updated = {
+        ...prev,
+        testimonials: {
+          ...prev.testimonials,
+          items: prev.testimonials.items.filter((item) => String(item.id) !== String(id)),
+        },
+      }
+      saveCache(updated)
+      return updated
+    })
     try {
       await testimonialsApi.delete(id)
     } catch (err) {
-      console.error('Gagal menghapus testimoni dari PostgreSQL:', err)
+      console.warn('Penghapusan testimoni disimpan di cache lokal (PostgreSQL API tidak merespons):', err)
     }
   }
 
@@ -401,6 +503,7 @@ export function ContentProvider({ children }) {
   return (
     <ContentContext.Provider
       value={{
+        isLoading,
         content,
         hero: content.hero,
         about: content.about,

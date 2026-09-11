@@ -1,7 +1,18 @@
+import { useState } from 'react'
 import { useContent } from '../context/useContent'
 
 export default function Hero() {
   const { hero } = useContent()
+  const [imgLoaded, setImgLoaded] = useState(false)
+  const [currentSrc, setCurrentSrc] = useState(hero?.imageUrl)
+
+  // Only reset imgLoaded if the URL actually changes from the previous one
+  if (hero?.imageUrl && hero.imageUrl !== currentSrc) {
+    setCurrentSrc(hero.imageUrl)
+    setImgLoaded(false)
+  }
+
+  const showSkeleton = !imgLoaded
 
   return (
     <header className="relative pt-40 pb-20 md:pt-56 md:pb-36 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
@@ -69,12 +80,35 @@ export default function Hero() {
             <div className="absolute -bottom-6 -right-6 w-full h-full border-4 border-primary/10 rounded-[40px] -rotate-3 -z-10"></div>
 
             {/* Main Sketchbook Frame */}
-            <div className="w-full h-full sketchbook-frame relative overflow-hidden shadow-2xl scale-105 transition-transform duration-700 hover:scale-[1.07]">
-              <img
-                className="w-full h-full object-cover rounded-sm transition-transform duration-1000 hover:scale-105"
-                src={hero.imageUrl || '/images/hero.JPG'}
-                alt={hero.imageAlt || 'Hero Illustration'}
-              />
+            <div className="w-full h-full sketchbook-frame relative overflow-hidden shadow-2xl scale-105 transition-transform duration-700 hover:scale-[1.07] bg-surface-container-high/30">
+              {showSkeleton && (
+                <div className="absolute inset-0 z-10 skeleton-shimmer flex flex-col items-center justify-center p-6 text-center rounded-sm">
+                  <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary/50 mb-3 animate-pulse">
+                    <span className="material-symbols-outlined text-4xl">brush</span>
+                  </div>
+                  <div className="h-3.5 w-32 bg-primary/15 rounded-full mb-2 animate-pulse"></div>
+                  <div className="h-2.5 w-20 bg-primary/10 rounded-full animate-pulse"></div>
+                </div>
+              )}
+
+              {hero?.imageUrl && (
+                <img
+                  ref={(el) => {
+                    if (el && el.complete && el.naturalWidth > 0 && !imgLoaded) {
+                      setImgLoaded(true)
+                    }
+                  }}
+                  className={`w-full h-full object-cover rounded-sm transition-all duration-500 hover:scale-105 ${
+                    imgLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+                  }`}
+                  src={hero.imageUrl}
+                  alt={hero.imageAlt || 'Hero Illustration'}
+                  loading="eager"
+                  decoding="async"
+                  onLoad={() => setImgLoaded(true)}
+                  onError={() => setImgLoaded(true)}
+                />
+              )}
             </div>
 
             {/* Floating Element Over Image */}
