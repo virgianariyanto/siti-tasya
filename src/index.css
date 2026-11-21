@@ -1,5 +1,5 @@
 body {
-  background-color: #fbfaee;
+  background-color: #EBB6E5;
   background-image: url("https://www.transparenttextures.com/patterns/cream-paper.png");
   overflow-x: hidden;
 }
@@ -15,19 +15,22 @@ body {
 .pulse-badge {
   position: relative;
 }
+
 .pulse-badge::after {
   content: "";
   position: absolute;
   inset: -4px;
   border-radius: 9999px;
-  border: 2px solid #bbcca7;
+  border: 2px solid #a4d5b9;
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
+
 @keyframes pulse {
   0% {
     transform: scale(1);
     opacity: 1;
   }
+
   100% {
     transform: scale(1.3);
     opacity: 0;
@@ -38,17 +41,19 @@ body {
   border-bottom: 5px solid rgba(0, 0, 0, 0.15);
   transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
+
 .storybook-button:hover {
   transform: translateY(2px);
   border-bottom-width: 3px;
 }
+
 .storybook-button:active {
   transform: translateY(5px);
   border-bottom-width: 0;
 }
 
 .hand-drawn-border {
-  border: 3px solid #56423d;
+  border: 3px solid #4a2544;
   border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
 }
 
@@ -56,6 +61,7 @@ body {
   column-count: 1;
   column-gap: 2.5rem;
 }
+
 @media (min-width: 768px) {
   .masonry {
     column-count: 2;
@@ -81,14 +87,15 @@ body {
   transform: rotate(-1deg);
   transition: transform 0.4s ease, box-shadow 0.4s ease;
 }
+
 .gallery-item:nth-child(even) .sketchbook-frame {
   transform: rotate(1.5deg);
 }
 
 .scribble-accent {
   pointer-events: none;
-  opacity: 0.25;
-  filter: sepia(100%) saturate(300%) hue-rotate(-10deg);
+  opacity: 0.35;
+  color: #741b52;
 }
 
 .torn-edge {
@@ -97,11 +104,9 @@ body {
 }
 
 .watercolor-blob {
-  background: radial-gradient(
-    circle,
-    var(--tw-gradient-from) 0%,
-    transparent 70%
-  );
+  background: radial-gradient(circle,
+      var(--tw-gradient-from) 0%,
+      transparent 70%);
   filter: blur(40px);
   opacity: 0.3;
 }
@@ -109,6 +114,7 @@ body {
 .text-mix {
   font-family: "Playfair Display", serif;
 }
+
 .text-mix span {
   font-style: italic;
   font-weight: 400;
@@ -120,18 +126,24 @@ body {
 }
 
 @keyframes floatSlow {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0px) rotate(0deg);
   }
+
   50% {
     transform: translateY(-10px) rotate(1deg);
   }
 }
 
 @keyframes floatSlowReverse {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0px) rotate(0deg);
   }
+
   50% {
     transform: translateY(10px) rotate(-1deg);
   }
@@ -146,19 +158,27 @@ body {
 }
 
 .text-gradient-primary {
-  background: linear-gradient(135deg, #9a4026 0%, #b9583b 50%, #735800 100%);
+  background: linear-gradient(135deg, #741b52 0%, #9e2b72 50%, #795900 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 @keyframes shake {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateX(0);
   }
-  15%, 45%, 75% {
+
+  15%,
+  45%,
+  75% {
     transform: translateX(-6px);
   }
-  30%, 60%, 90% {
+
+  30%,
+  60%,
+  90% {
     transform: translateX(6px);
   }
 }
@@ -171,20 +191,17 @@ body {
   0% {
     background-position: -200% 0;
   }
+
   100% {
     background-position: 200% 0;
   }
 }
 
 .skeleton-shimmer {
-  background: linear-gradient(
-    90deg,
-    rgba(235, 229, 216, 0.55) 0%,
-    rgba(252, 250, 243, 0.92) 50%,
-    rgba(235, 229, 216, 0.55) 100%
-  );
+  background: linear-gradient(90deg,
+      rgba(224, 180, 219, 0.55) 0%,
+      rgba(255, 245, 254, 0.92) 50%,
+      rgba(224, 180, 219, 0.55) 100%);
   background-size: 200% 100%;
   animation: shimmer 1.8s ease-in-out infinite;
 }
-
-

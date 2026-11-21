@@ -21,6 +21,10 @@ export function getSocialPlatform(name = '', url = '', icon = '') {
     if (lowerIcon.includes('facebook') || lowerIcon === 'fb') return 'facebook'
     if (lowerIcon.includes('whatsapp') || lowerIcon === 'wa') return 'whatsapp'
     if (lowerIcon.includes('threads')) return 'threads'
+    if (lowerIcon.includes('kofi') || lowerIcon.includes('ko-fi')) return 'kofi'
+    if (lowerIcon.includes('fastwork')) return 'fastwork'
+    if (lowerIcon.includes('drawmarket') || lowerIcon.includes('draw market')) return 'drawmarket'
+    if (lowerIcon.includes('kirke')) return 'kirke'
     if (lowerIcon.includes('mail') || lowerIcon.includes('email')) return 'mail'
   }
 
@@ -39,6 +43,10 @@ export function getSocialPlatform(name = '', url = '', icon = '') {
   if (lowerName.includes('facebook') || lowerUrl.includes('facebook.com')) return 'facebook'
   if (lowerName.includes('whatsapp') || lowerUrl.includes('wa.me') || lowerUrl.includes('whatsapp.com')) return 'whatsapp'
   if (lowerName.includes('threads') || lowerUrl.includes('threads.net')) return 'threads'
+  if (lowerName.includes('kofi') || lowerName.includes('ko-fi') || lowerUrl.includes('ko-fi.com')) return 'kofi'
+  if (lowerName.includes('fastwork') || lowerUrl.includes('fastwork.id') || lowerUrl.includes('fastwork.co')) return 'fastwork'
+  if (lowerName.includes('drawmarket') || lowerName.includes('draw market') || lowerUrl.includes('drawmarket')) return 'drawmarket'
+  if (lowerName.includes('kirke') || lowerUrl.includes('kirke.social')) return 'kirke'
   if (lowerName.includes('email') || lowerName.includes('mail') || lowerUrl.startsWith('mailto:')) return 'mail'
 
   return 'link'
@@ -148,6 +156,34 @@ export default function SocialIcon({ name = '', url = '', icon = '', className =
         <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
           <polyline points="22,6 12,13 2,6"></polyline>
+        </svg>
+      )
+    case 'kofi':
+      return (
+        <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+          <path d="M23.881 8.948c-.027-.375-.145-.733-.346-1.047-.789-1.233-2.67-1.847-5.59-1.825H0v10.978c0 1.25.498 2.45 1.383 3.334.885.885 2.084 1.383 3.334 1.383h10.978c1.25 0 2.45-.498 3.334-1.383.885-.885 1.383-2.084 1.383-3.334v-1.782h3.469c1.782 0 3.334-1.047 3.334-2.83 0-1.825-1.552-3.498-3.334-3.498zm-3.469 4.312h-3.469V8.077h3.469c1.047 0 1.552.733 1.552 1.593 0 .86-.505 1.59-1.552 1.59zM10.84 14.542c-1.758-1.758-2.625-2.625-2.625-3.563 0-.938.867-1.708 1.805-1.708.586 0 1.113.352 1.406.82.293-.468.82-.82 1.406-.82.938 0 1.805.77 1.805 1.708 0 .938-.867 1.805-2.625 3.563l-.586.586-.586-.586z" />
+        </svg>
+      )
+    case 'fastwork':
+      return (
+        <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm3.8 6.6l-5.6 5.6h3.4l-1.6 3.8 5.6-5.6h-3.4l1.6-3.8z" />
+        </svg>
+      )
+    case 'drawmarket':
+      return (
+        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <path d="M16 10a4 4 0 0 1-8 0"></path>
+          <path d="M12 14v4"></path>
+          <path d="M10 16h4"></path>
+        </svg>
+      )
+    case 'kirke':
+      return (
+        <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8.009 8.009 0 0 1-8 8zm-1-13h2v4.5l3.2-3.2 1.4 1.4-3.2 3.3 3.6 3.6-1.4 1.4L13 13.5V17h-2z" />
         </svg>
       )
     case 'link':

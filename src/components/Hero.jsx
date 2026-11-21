@@ -21,11 +21,54 @@ export default function Hero() {
         <div className="col-span-12 lg:col-span-7 z-10 space-y-8 lg:pr-10">
           {/* Status Badge */}
           {hero.statusBadge && (
-            <div className="inline-flex items-center gap-3 bg-secondary-container/80 backdrop-blur-sm text-on-secondary-container px-5 py-2.5 rounded-full text-label-caps pulse-badge font-bold">
-              <span className="w-2.5 h-2.5 bg-secondary rounded-full"></span>
-              {hero.statusBadge}
+            <div className="mb-6 lg:mb-0">
+              <div className="inline-flex items-center gap-3 bg-secondary-container/80 backdrop-blur-sm text-on-secondary-container px-5 py-2.5 rounded-full text-label-caps pulse-badge font-bold">
+                <span className="w-2.5 h-2.5 bg-secondary rounded-full"></span>
+                {hero.statusBadge}
+              </div>
             </div>
           )}
+
+          {/* Mobile Only: Hero Image placed directly below Status Badge */}
+          <div className="block lg:hidden pt-8 pb-6 my-4">
+            <div className="relative w-full aspect-square max-w-[300px] sm:max-w-sm mx-auto">
+              {/* Decorative Frame Behind */}
+              <div className="absolute -top-6 -left-6 sm:-top-8 sm:-left-8 w-full h-full bg-tertiary-fixed/80 border-2 border-white/60 rounded-[40px] sm:rounded-[60px] rotate-6 -z-10 shadow-md"></div>
+              <div className="absolute -bottom-4 -right-4 sm:-bottom-6 sm:-right-6 w-full h-full border-3 sm:border-4 border-primary/20 rounded-[30px] sm:rounded-[40px] -rotate-3 -z-10"></div>
+
+              {/* Main Sketchbook Frame */}
+              <div className="w-full h-full sketchbook-frame relative overflow-hidden shadow-xl scale-100 bg-surface-container-high/30">
+                {showSkeleton && (
+                  <div className="absolute inset-0 z-10 skeleton-shimmer flex flex-col items-center justify-center p-6 text-center rounded-sm">
+                    <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary/50 mb-3 animate-pulse">
+                      <span className="material-symbols-outlined text-3xl">brush</span>
+                    </div>
+                    <div className="h-3 w-28 bg-primary/15 rounded-full mb-2 animate-pulse"></div>
+                    <div className="h-2 w-16 bg-primary/10 rounded-full animate-pulse"></div>
+                  </div>
+                )}
+
+                {hero?.imageUrl && (
+                  <img
+                    className={`w-full h-full object-cover rounded-sm transition-all duration-500 ${
+                      imgLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+                    }`}
+                    src={hero.imageUrl}
+                    alt={hero.imageAlt || 'Hero Illustration'}
+                    loading="eager"
+                    decoding="async"
+                    onLoad={() => setImgLoaded(true)}
+                    onError={() => setImgLoaded(true)}
+                  />
+                )}
+              </div>
+
+              {/* Floating Element Over Image */}
+              <div className="absolute -top-8 -right-6 scribble-accent text-primary/60 scale-125">
+                <span className="material-symbols-outlined text-5xl">magic_button</span>
+              </div>
+            </div>
+          </div>
 
           {/* Main Headline */}
           <div>
@@ -72,12 +115,12 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* Right Column - Overlapping Hero Image */}
-        <div className="col-span-12 lg:col-span-5 relative mt-8 lg:mt-0">
+        {/* Right Column - Overlapping Hero Image (Desktop Only) */}
+        <div className="hidden lg:block col-span-12 lg:col-span-5 relative mt-8 lg:mt-0">
           <div className="relative w-full aspect-square max-w-lg mx-auto lg:ml-auto">
             {/* Decorative Frame Behind */}
-            <div className="absolute -top-10 -left-10 w-full h-full bg-secondary-container/40 rounded-[60px] rotate-6 -z-10"></div>
-            <div className="absolute -bottom-6 -right-6 w-full h-full border-4 border-primary/10 rounded-[40px] -rotate-3 -z-10"></div>
+            <div className="absolute -top-10 -left-10 w-full h-full bg-tertiary-fixed/80 border-2 border-white/60 rounded-[60px] rotate-6 -z-10 shadow-lg"></div>
+            <div className="absolute -bottom-6 -right-6 w-full h-full border-4 border-primary/20 rounded-[40px] -rotate-3 -z-10"></div>
 
             {/* Main Sketchbook Frame */}
             <div className="w-full h-full sketchbook-frame relative overflow-hidden shadow-2xl scale-105 transition-transform duration-700 hover:scale-[1.07] bg-surface-container-high/30">

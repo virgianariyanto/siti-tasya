@@ -8,7 +8,7 @@ import Hero from './components/Hero'
 import About from './components/About'
 import Services from './components/Services'
 import Gallery from './components/Gallery'
-import Testimonials from './components/Testimonials'
+import CreativeHub from './components/CreativeHub'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
 import Login from './components/Login'
@@ -89,7 +89,7 @@ function AppContent() {
           <About />
           <Services />
           <Gallery />
-          <Testimonials />
+          <CreativeHub />
           <Contact />
         </main>
       )}
