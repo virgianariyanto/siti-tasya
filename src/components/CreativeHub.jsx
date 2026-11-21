@@ -66,7 +66,7 @@ const PLATFORMS = [
     badgeColor: 'bg-stone-100 text-stone-800 border-stone-300',
     iconBg: 'bg-neutral-900 text-white',
     description: 'Sketsa santai harian, info slot komisi & update studio.',
-    url: 'https://x.com/tashaillustrates',
+    url: 'https://x.com/',
     buttonText: 'Follow on X',
     buttonClass: 'bg-white text-primary border border-primary/20 hover:bg-primary/5',
   },
@@ -124,9 +124,8 @@ export default function CreativeHub() {
             return (
               <div
                 key={item.id}
-                className={`bg-white p-5 rounded-2xl hand-drawn-border hover:shadow-lg transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between group ${
-                  isLast ? 'sm:col-span-2 lg:col-span-1' : ''
-                }`}
+                className={`bg-white p-5 rounded-2xl hand-drawn-border hover:shadow-lg transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between group ${isLast ? 'sm:col-span-2 lg:col-span-1' : ''
+                  }`}
               >
                 <div>
                   {/* Top Bar: Compact Icon, Name & Badge */}
@@ -166,11 +165,10 @@ export default function CreativeHub() {
                     <button
                       type="button"
                       onClick={handleCopyDiscord}
-                      className={`w-full py-2 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 storybook-button transition-all cursor-pointer ${
-                        copiedDiscord
+                      className={`w-full py-2 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 storybook-button transition-all cursor-pointer ${copiedDiscord
                           ? 'bg-emerald-600 text-white shadow-sm'
                           : item.buttonClass
-                      }`}
+                        }`}
                       title="Klik untuk menyalin username Discord: pinkpanther0696"
                     >
                       <span className="material-symbols-outlined text-sm">
