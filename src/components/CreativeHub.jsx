@@ -8,7 +8,7 @@ const PLATFORMS = [
     category: 'Commission',
     badgeColor: 'bg-emerald-100 text-emerald-800 border-emerald-300',
     iconBg: 'bg-[#00b4d8] text-white',
-    description: 'Pesan komisi ilustrasi buku & karakter bergaransi aman.',
+    description: 'Order verified book illustrations & character designs with secure payment.',
     url: 'https://fastwork.com/user/m5omgv',
     buttonText: 'Order via Fastwork',
     buttonClass: 'bg-primary text-on-primary hover:opacity-95 shadow-sm',
@@ -20,9 +20,9 @@ const PLATFORMS = [
     category: 'Art Store',
     badgeColor: 'bg-amber-100 text-amber-800 border-amber-300',
     iconBg: 'bg-[#f97316] text-white',
-    description: 'Toko art print, aset grafis & ilustrasi digital siap unduh.',
+    description: 'Shop printable art, graphic assets & downloadable digital illustrations.',
     url: 'https://draw.market/tasha',
-    buttonText: 'Kunjungi Toko',
+    buttonText: 'Visit Store',
     buttonClass: 'bg-white text-primary border border-primary/20 hover:bg-primary/5',
   },
   {
@@ -31,7 +31,7 @@ const PLATFORMS = [
     category: 'Tip Jar',
     badgeColor: 'bg-rose-100 text-rose-800 border-rose-300',
     iconBg: 'bg-[#FF5E5B] text-white',
-    description: 'Dukung karya independen, traktir kopi & dapatkan sketsa eksklusif.',
+    description: 'Support independent stories, buy me a tea & unlock exclusive sketchbook WIPs.',
     url: 'https://ko-fi.com/tasya245',
     buttonText: 'Support on Ko-fi',
     buttonClass: 'bg-[#FF5E5B] text-white hover:bg-[#e44d4a] shadow-sm',
@@ -43,9 +43,9 @@ const PLATFORMS = [
     category: 'Network',
     badgeColor: 'bg-purple-100 text-purple-800 border-purple-300',
     iconBg: 'bg-[#8b5cf6] text-white',
-    description: 'Jejaring sosial kreatif untuk berbagi proses karya seni.',
+    description: 'Creative social network sharing daily artistic processes & visual storytelling.',
     url: 'https://Kirke.social/tashaillustrates/card',
-    buttonText: 'Ikuti di Kirke',
+    buttonText: 'Follow on Kirke',
     buttonClass: 'bg-white text-primary border border-primary/20 hover:bg-primary/5',
   },
   {
@@ -54,9 +54,9 @@ const PLATFORMS = [
     category: 'Portfolio',
     badgeColor: 'bg-sky-100 text-sky-800 border-sky-300',
     iconBg: 'bg-[#13aff0] text-white',
-    description: 'Galeri portofolio profesional & concept art resolusi tinggi.',
+    description: 'High-res portfolio showcase for concept art, publishing & visual development.',
     url: 'https://www.artstation.com/tasya_illustrate8',
-    buttonText: 'Buka Artstation',
+    buttonText: 'View Artstation',
     buttonClass: 'bg-white text-primary border border-primary/20 hover:bg-primary/5',
   },
   {
@@ -65,8 +65,8 @@ const PLATFORMS = [
     category: 'Daily WIP',
     badgeColor: 'bg-stone-100 text-stone-800 border-stone-300',
     iconBg: 'bg-neutral-900 text-white',
-    description: 'Sketsa santai harian, info slot komisi & update studio.',
-    url: 'https://x.com/',
+    description: 'Daily casual doodles, commission slot announcements & studio updates.',
+    url: 'https://x.com/tashaillustrates',
     buttonText: 'Follow on X',
     buttonClass: 'bg-white text-primary border border-primary/20 hover:bg-primary/5',
   },
@@ -76,10 +76,10 @@ const PLATFORMS = [
     category: 'Community',
     badgeColor: 'bg-indigo-100 text-indigo-800 border-indigo-300',
     iconBg: 'bg-[#5865F2] text-white',
-    description: 'Tambahkan username pinkpanther0696 untuk chat santai & diskusi proyek.',
+    description: 'Add username pinkpanther0696 for casual creative chats & project inquiries.',
     username: 'pinkpanther0696',
     url: 'https://discord.com',
-    buttonText: 'Salin @pinkpanther0696',
+    buttonText: 'Copy @pinkpanther0696',
     buttonClass: 'bg-white text-primary border border-primary/20 hover:bg-primary/5',
     isDiscord: true,
   },
@@ -112,7 +112,7 @@ export default function CreativeHub() {
             Creative Hub & Marketplaces
           </h2>
           <p className="font-body-md text-sm md:text-base text-on-surface-variant leading-relaxed">
-            Pesan komisi resmi, belanja art print, dukung karya mandiri, atau terhubung di platform favorit Anda.
+            Order official commissions, shop art prints, support the artist, or connect on your favorite platforms.
           </p>
         </div>
 
@@ -169,13 +169,13 @@ export default function CreativeHub() {
                           ? 'bg-emerald-600 text-white shadow-sm'
                           : item.buttonClass
                         }`}
-                      title="Klik untuk menyalin username Discord: pinkpanther0696"
+                      title="Click to copy Discord username: pinkpanther0696"
                     >
                       <span className="material-symbols-outlined text-sm">
                         {copiedDiscord ? 'check' : 'content_copy'}
                       </span>
                       <span>
-                        {copiedDiscord ? 'Username Tersalin! ✓' : 'Salin @pinkpanther0696'}
+                        {copiedDiscord ? 'Copied to Clipboard! ✓' : 'Copy @pinkpanther0696'}
                       </span>
                     </button>
                   ) : (
